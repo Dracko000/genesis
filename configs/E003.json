@@ -1,0 +1,21 @@
+{
+  "stable_rule": "interaction",
+  "changed_rule": "changed",
+  "n_train": 400,
+  "n_new": 120,
+  "n_new_val": 100,
+  "n_test": 300,
+  "seeds": [0, 1, 2],
+  "adaptation_epochs": [5, 10, 25, 50],
+  "anomaly_magnitude": 25.0,
+  "neural": {
+    "hidden_sizes": [32, 32],
+    "learning_rate": 0.01,
+    "epochs": 300,
+    "batch_size": 32,
+    "weight_decay": 0.0001,
+    "seed": 0,
+    "activation": "relu",
+    "standardize_target": true
+  }
+}

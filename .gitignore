@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Environment / secrets
+.env
+.env.local
+*.key
+*.pem
+
+# Runtime artifacts
+data/
+artifacts/
+checkpoints/
+*.sqlite
+*.sqlite3
+*.db
+*.jsonl
+logs/
+
+# Node / frontend
+node_modules/
+apps/research-ui/dist/
+apps/research-ui/.vite/
+npm-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# TypeScript build artifacts (tsc -b)
+*.tsbuildinfo
+apps/research-ui/vite.config.js
+apps/research-ui/vite.config.d.ts

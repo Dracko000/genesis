@@ -1,0 +1,24 @@
+{
+  "rule": "interaction",
+  "n_train": 400,
+  "n_val": 200,
+  "n_test": 400,
+  "seeds": [0, 1, 2],
+  "symbolic": {
+    "l2": 1e-6,
+    "coefficient_threshold": 1e-4,
+    "include_products": true,
+    "include_squares": true,
+    "include_trigonometric": false
+  },
+  "neural": {
+    "hidden_sizes": [32, 32],
+    "learning_rate": 0.01,
+    "epochs": 300,
+    "batch_size": 32,
+    "weight_decay": 0.0001,
+    "seed": 0,
+    "activation": "relu",
+    "standardize_target": true
+  }
+}

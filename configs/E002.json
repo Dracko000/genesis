@@ -1,0 +1,21 @@
+{
+  "source_rule": "linear",
+  "target_rule": "interaction",
+  "unrelated_rule": "quadratic",
+  "n_source": 500,
+  "n_target": 120,
+  "n_target_test": 300,
+  "seeds": [0, 1, 2],
+  "warm_epochs": 25,
+  "full_epochs": 250,
+  "neural": {
+    "hidden_sizes": [32, 32],
+    "learning_rate": 0.01,
+    "epochs": 250,
+    "batch_size": 32,
+    "weight_decay": 0.0001,
+    "seed": 0,
+    "activation": "relu",
+    "standardize_target": true
+  }
+}

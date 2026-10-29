@@ -1,0 +1,315 @@
+{
+  "config": {
+    "n_test": 400,
+    "n_train": 400,
+    "n_val": 200,
+    "neural": {
+      "activation": "relu",
+      "batch_size": 32,
+      "epochs": 300,
+      "hidden_sizes": [
+        32,
+        32
+      ],
+      "learning_rate": 0.01,
+      "seed": 0,
+      "standardize_target": true,
+      "weight_decay": 0.0001
+    },
+    "rule": "interaction",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "symbolic": {
+      "coefficient_threshold": 0.0001,
+      "include_products": true,
+      "include_squares": true,
+      "include_trigonometric": false,
+      "l2": 1e-06
+    }
+  },
+  "criterion": {
+    "hybrid_to_best_single_ratio": 1.0,
+    "met": true,
+    "selected_counts": {
+      "neural": 0,
+      "symbolic": 3
+    },
+    "statement": "Hybrid held-out MSE is at most 5% worse than the better single method."
+  },
+  "experiment": "HYBRID",
+  "hypothesis": "Validation-selected hybridisation is no worse than the better single method on held-out data.",
+  "limitations": [
+    "The symbolic basis is a fixed prior over low-level operators, not emergent symbols.",
+    "Budget parity is approximate: the symbolic fit is closed-form, the neural fit is iterative.",
+    "Selection uses a single validation split and can overfit that split."
+  ],
+  "per_seed": [
+    {
+      "metrics": {
+        "hybrid_selected": {
+          "mae": 8.185638533053327e-09,
+          "max_abs_error": 3.382217195202486e-08,
+          "mse": 1.1563200375050302e-16,
+          "n": 400.0,
+          "r2": 0.9999999999999996,
+          "rmse": 1.0753232246655097e-08
+        },
+        "neural_only": {
+          "mae": 0.02098976766039993,
+          "max_abs_error": 0.18096975870894416,
+          "mse": 0.0008247947103172471,
+          "n": 400.0,
+          "r2": 0.9970640036974182,
+          "rmse": 0.028719239375673708
+        },
+        "oracle": {
+          "mae": 0.0,
+          "max_abs_error": 0.0,
+          "mse": 0.0,
+          "n": 400.0,
+          "r2": 1.0,
+          "rmse": 0.0
+        },
+        "symbolic_only": {
+          "mae": 8.185638533053327e-09,
+          "max_abs_error": 3.382217195202486e-08,
+          "mse": 1.1563200375050302e-16,
+          "n": 400.0,
+          "r2": 0.9999999999999996,
+          "rmse": 1.0753232246655097e-08
+        }
+      },
+      "seed": 0,
+      "selected": "symbolic",
+      "symbolic_expression": [
+        {
+          "coefficient": 1.0756766257947927e-09,
+          "term": "1"
+        },
+        {
+          "coefficient": 0.5999999945932677,
+          "term": "f3"
+        },
+        {
+          "coefficient": 1.1999999695167758,
+          "term": "f1*f2"
+        }
+      ],
+      "validation_mse": {
+        "neural": 0.0009430303314577615,
+        "symbolic": 1.195067446774835e-16
+      }
+    },
+    {
+      "metrics": {
+        "hybrid_selected": {
+          "mae": 8.337901508919685e-09,
+          "max_abs_error": 3.1557125579340095e-08,
+          "mse": 1.172908755636395e-16,
+          "n": 400.0,
+          "r2": 0.9999999999999997,
+          "rmse": 1.0830091207540199e-08
+        },
+        "neural_only": {
+          "mae": 0.014933962145151424,
+          "max_abs_error": 0.11152102638483896,
+          "mse": 0.00045538117336523063,
+          "n": 400.0,
+          "r2": 0.9985113852551871,
+          "rmse": 0.021339661978701317
+        },
+        "oracle": {
+          "mae": 0.0,
+          "max_abs_error": 0.0,
+          "mse": 0.0,
+          "n": 400.0,
+          "r2": 1.0,
+          "rmse": 0.0
+        },
+        "symbolic_only": {
+          "mae": 8.337901508919685e-09,
+          "max_abs_error": 3.1557125579340095e-08,
+          "mse": 1.172908755636395e-16,
+          "n": 400.0,
+          "r2": 0.9999999999999997,
+          "rmse": 1.0830091207540199e-08
+        }
+      },
+      "seed": 1,
+      "selected": "symbolic",
+      "symbolic_expression": [
+        {
+          "coefficient": -2.0714463369880457e-09,
+          "term": "1"
+        },
+        {
+          "coefficient": 0.5999999968316853,
+          "term": "f3"
+        },
+        {
+          "coefficient": 1.199999969981984,
+          "term": "f1*f2"
+        }
+      ],
+      "validation_mse": {
+        "neural": 0.00024615390638873386,
+        "symbolic": 1.0142799321475443e-16
+      }
+    },
+    {
+      "metrics": {
+        "hybrid_selected": {
+          "mae": 7.012692392205372e-09,
+          "max_abs_error": 2.614443772586128e-08,
+          "mse": 8.358986064335029e-17,
+          "n": 400.0,
+          "r2": 0.9999999999999998,
+          "rmse": 9.14274907472311e-09
+        },
+        "neural_only": {
+          "mae": 0.019735977853704848,
+          "max_abs_error": 0.16661054824517163,
+          "mse": 0.0006664775979503407,
+          "n": 400.0,
+          "r2": 0.9978374940203077,
+          "rmse": 0.02581622741514222
+        },
+        "oracle": {
+          "mae": 0.0,
+          "max_abs_error": 0.0,
+          "mse": 0.0,
+          "n": 400.0,
+          "r2": 1.0,
+          "rmse": 0.0
+        },
+        "symbolic_only": {
+          "mae": 7.012692392205372e-09,
+          "max_abs_error": 2.614443772586128e-08,
+          "mse": 8.358986064335029e-17,
+          "n": 400.0,
+          "r2": 0.9999999999999998,
+          "rmse": 9.14274907472311e-09
+        }
+      },
+      "seed": 2,
+      "selected": "symbolic",
+      "symbolic_expression": [
+        {
+          "coefficient": 1.286054787669234e-09,
+          "term": "1"
+        },
+        {
+          "coefficient": 0.5999999959991669,
+          "term": "f3"
+        },
+        {
+          "coefficient": 1.1999999745702075,
+          "term": "f1*f2"
+        }
+      ],
+      "validation_mse": {
+        "neural": 0.0007455618807248088,
+        "symbolic": 7.569708373226601e-17
+      }
+    }
+  ],
+  "research_question": "Does a hybrid of the neural baseline and a low-level symbolic basis improve held-out prediction relative to either alone?",
+  "summary": {
+    "hybrid_selected": {
+      "mae": {
+        "max": 8.337901508919685e-09,
+        "mean": 7.845410811392794e-09,
+        "min": 7.012692392205372e-09,
+        "n": 3.0,
+        "std": 7.251627249765531e-10
+      },
+      "mse": {
+        "max": 1.172908755636395e-16,
+        "mean": 1.0550424665249762e-16,
+        "min": 8.358986064335029e-17,
+        "n": 3.0,
+        "std": 1.8996531250245092e-17
+      },
+      "r2": {
+        "max": 0.9999999999999998,
+        "mean": 0.9999999999999997,
+        "min": 0.9999999999999996,
+        "n": 3.0,
+        "std": 1.1102230246251565e-16
+      }
+    },
+    "neural_only": {
+      "mae": {
+        "max": 0.02098976766039993,
+        "mean": 0.01855323588641873,
+        "min": 0.014933962145151424,
+        "n": 3.0,
+        "std": 0.0031964596087724027
+      },
+      "mse": {
+        "max": 0.0008247947103172471,
+        "mean": 0.0006488844938776061,
+        "min": 0.00045538117336523063,
+        "n": 3.0,
+        "std": 0.00018533409913999976
+      },
+      "r2": {
+        "max": 0.9985113852551871,
+        "mean": 0.9978042943243044,
+        "min": 0.9970640036974182,
+        "n": 3.0,
+        "std": 0.0007242616987687727
+      }
+    },
+    "oracle": {
+      "mae": {
+        "max": 0.0,
+        "mean": 0.0,
+        "min": 0.0,
+        "n": 3.0,
+        "std": 0.0
+      },
+      "mse": {
+        "max": 0.0,
+        "mean": 0.0,
+        "min": 0.0,
+        "n": 3.0,
+        "std": 0.0
+      },
+      "r2": {
+        "max": 1.0,
+        "mean": 1.0,
+        "min": 1.0,
+        "n": 3.0,
+        "std": 0.0
+      }
+    },
+    "symbolic_only": {
+      "mae": {
+        "max": 8.337901508919685e-09,
+        "mean": 7.845410811392794e-09,
+        "min": 7.012692392205372e-09,
+        "n": 3.0,
+        "std": 7.251627249765531e-10
+      },
+      "mse": {
+        "max": 1.172908755636395e-16,
+        "mean": 1.0550424665249762e-16,
+        "min": 8.358986064335029e-17,
+        "n": 3.0,
+        "std": 1.8996531250245092e-17
+      },
+      "r2": {
+        "max": 0.9999999999999998,
+        "mean": 0.9999999999999997,
+        "min": 0.9999999999999996,
+        "n": 3.0,
+        "std": 1.1102230246251565e-16
+      }
+    }
+  },
+  "title": "Neural vs symbolic-basis vs validation-selected hybrid"
+}
