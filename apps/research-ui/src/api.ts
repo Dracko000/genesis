@@ -7,6 +7,7 @@ import type {
   Observation,
   PredictResponse,
   ResearchLog,
+  RevisionRecord,
 } from "./types";
 
 const BASE = (import.meta.env.VITE_API_BASE as string | undefined) ?? "/api";
@@ -73,6 +74,12 @@ export const api = {
   },
   getExperiment: (id: string) => request<ExperimentRecord>(`/experiments/${id}`),
   getMetrics: (id: string) => request<MetricRecord[]>(`/experiments/${id}/metrics`),
+  getRevisions: async (id: string) => {
+    const data = await request<{ revisions: RevisionRecord[] }>(
+      `/experiments/${id}/revisions`,
+    );
+    return data.revisions;
+  },
   startExperiment: (experiment: string, config: Record<string, unknown>) =>
     request<ExperimentRecord>("/experiments", {
       method: "POST",

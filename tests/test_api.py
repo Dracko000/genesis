@@ -153,3 +153,43 @@ def test_e003_persists_revision_history(tmp_path):
     )
     assert len(revisions) == 1
     assert revisions[0]["payload"]["experiment"] == "E003"
+    response = client.get(f"/experiments/{experiment_id}/revisions")
+    assert response.status_code == 200
+    assert response.json()["revisions"][0]["payload"]["experiment"] == "E003"
+
+
+def test_e003_retention_persists_structured_revisions(tmp_path):
+    client = _client(tmp_path)
+    start = client.post(
+        "/experiments",
+        json={
+            "experiment": "E003-RETENTION",
+            "config": {
+                "seeds": [0],
+                "n_train": 100,
+                "n_new": 40,
+                "n_new_val": 30,
+                "n_test": 40,
+                "adaptation_epochs": [5],
+                "neural": {"epochs": 10, "hidden_sizes": [8], "seed": 0},
+            },
+        },
+    )
+    assert start.status_code == 202, start.text
+    experiment_id = start.json()["id"]
+    status = "running"
+    record = {}
+    for _ in range(100):
+        record = client.get(f"/experiments/{experiment_id}").json()
+        status = record["status"]
+        if status != "running":
+            break
+        time.sleep(0.2)
+    assert status == "completed", record
+    response = client.get(f"/experiments/{experiment_id}/revisions")
+    assert response.status_code == 200
+    payload = response.json()["revisions"][0]["payload"]
+    assert payload["experiment"] == "E003-v2"
+    assert "curve" in payload
+    assert "criterion" in payload
+    assert client.get("/revisions").status_code == 200

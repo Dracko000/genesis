@@ -1,0 +1,349 @@
+{
+  "config": {
+    "adaptation_epochs": [
+      5,
+      10,
+      25,
+      50
+    ],
+    "anomaly_magnitude": 25.0,
+    "changed_rule": "changed",
+    "n_new": 120,
+    "n_new_val": 100,
+    "n_test": 300,
+    "n_train": 400,
+    "neural": {
+      "activation": "relu",
+      "batch_size": 32,
+      "epochs": 300,
+      "hidden_sizes": [
+        32,
+        32
+      ],
+      "learning_rate": 0.01,
+      "seed": 0,
+      "standardize_target": true,
+      "weight_decay": 0.0001
+    },
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "stable_rule": "interaction"
+  },
+  "criterion": {
+    "met": true,
+    "relative_new_task_improvement": 0.995605177786451,
+    "retention_reported_not_gated": true,
+    "statement": "New-task MSE improves by at least 10% after the controlled update and an isolated anomalous observation is not accepted."
+  },
+  "experiment": "E003",
+  "hypothesis": "Validation-gated updates reduce new-task error after a rule change and reject an isolated anomalous observation, with bounded old-task deterioration.",
+  "limitations": [
+    "Retention is reported without a success threshold; the trade-off is exploratory.",
+    "Rule-change pairs are synthetic and low-dimensional.",
+    "A single anomalous record is a narrow robustness probe.",
+    "Replay consolidation is an exploratory variant, not part of the gated criterion."
+  ],
+  "per_seed": [
+    {
+      "adaptation_curve": [
+        {
+          "accepted": true,
+          "epochs": 5,
+          "new_task_mse": 0.0836728034538196,
+          "old_task_mse": 0.398057772480437,
+          "validation_after": 0.06879986564661154,
+          "validation_before": 0.43534955113033186
+        },
+        {
+          "accepted": true,
+          "epochs": 10,
+          "new_task_mse": 0.034055140455580314,
+          "old_task_mse": 0.4357747203814754,
+          "validation_after": 0.02756085678490163,
+          "validation_before": 0.43534955113033186
+        },
+        {
+          "accepted": true,
+          "epochs": 25,
+          "new_task_mse": 0.003531161903410122,
+          "old_task_mse": 0.5201164125740995,
+          "validation_after": 0.002559956356036595,
+          "validation_before": 0.43534955113033186
+        },
+        {
+          "accepted": true,
+          "epochs": 50,
+          "new_task_mse": 0.002167860274755448,
+          "old_task_mse": 0.5182555372089559,
+          "validation_after": 0.0016341767808170679,
+          "validation_before": 0.43534955113033186
+        }
+      ],
+      "contaminated_batch": {
+        "accepted": false,
+        "new_task_mse": 0.5476010342443565
+      },
+      "new_task_after": {
+        "mae": 0.030142587049196822,
+        "max_abs_error": 0.2451627895095123,
+        "mse": 0.002167860274755448,
+        "n": 300.0,
+        "r2": 0.9917451951757632,
+        "rmse": 0.04656028645482594
+      },
+      "new_task_before": {
+        "mae": 0.6247099026055722,
+        "max_abs_error": 1.7822790846260825,
+        "mse": 0.5476010342443565,
+        "n": 300.0,
+        "r2": -1.0851619045177228,
+        "rmse": 0.7400006988134245
+      },
+      "old_task_after": {
+        "mae": 0.6052569335670033,
+        "max_abs_error": 2.0101129423715576,
+        "mse": 0.5182555372089559,
+        "n": 300.0,
+        "r2": -0.9148341607662813,
+        "rmse": 0.7198996716272038
+      },
+      "old_task_before": {
+        "mae": 0.015824665057307855,
+        "max_abs_error": 0.059004824590785265,
+        "mse": 0.00035750584219857394,
+        "n": 300.0,
+        "r2": 0.9986790987260801,
+        "rmse": 0.018907824893376127
+      },
+      "replay_consolidation": {
+        "accepted": true,
+        "new_task_mse": 0.3690638126592905,
+        "old_task_mse": 0.02901885518397325
+      },
+      "seed": 0,
+      "single_anomaly": {
+        "accepted": false,
+        "new_task_mse": 0.5476010342443565
+      },
+      "update_accepted": true
+    },
+    {
+      "adaptation_curve": [
+        {
+          "accepted": true,
+          "epochs": 5,
+          "new_task_mse": 0.0744157871147223,
+          "old_task_mse": 0.49277726316439374,
+          "validation_after": 0.09861036810995849,
+          "validation_before": 0.7122800394952108
+        },
+        {
+          "accepted": true,
+          "epochs": 10,
+          "new_task_mse": 0.011456509478719621,
+          "old_task_mse": 0.5208534046481462,
+          "validation_after": 0.014192704085320244,
+          "validation_before": 0.7122800394952108
+        },
+        {
+          "accepted": true,
+          "epochs": 25,
+          "new_task_mse": 0.003793097732622512,
+          "old_task_mse": 0.547246246358486,
+          "validation_after": 0.005632362288386637,
+          "validation_before": 0.7122800394952108
+        },
+        {
+          "accepted": true,
+          "epochs": 50,
+          "new_task_mse": 0.002864742723959319,
+          "old_task_mse": 0.5472280432074323,
+          "validation_after": 0.0045989202304937415,
+          "validation_before": 0.7122800394952108
+        }
+      ],
+      "contaminated_batch": {
+        "accepted": true,
+        "new_task_mse": 0.4361817338097692
+      },
+      "new_task_after": {
+        "mae": 0.03593512405217448,
+        "max_abs_error": 0.22318163236737565,
+        "mse": 0.002864742723959319,
+        "n": 300.0,
+        "r2": 0.9882778833968893,
+        "rmse": 0.053523291415600735
+      },
+      "new_task_before": {
+        "mae": 0.6011016573858778,
+        "max_abs_error": 1.7415787248651526,
+        "mse": 0.5324463910809379,
+        "n": 300.0,
+        "r2": -1.1786943130900465,
+        "rmse": 0.729689242815692
+      },
+      "old_task_after": {
+        "mae": 0.630038017560066,
+        "max_abs_error": 1.8330351023793305,
+        "mse": 0.5472280432074323,
+        "n": 300.0,
+        "r2": -0.9416280296542217,
+        "rmse": 0.7397486351507736
+      },
+      "old_task_before": {
+        "mae": 0.010639463640552608,
+        "max_abs_error": 0.060271760714062594,
+        "mse": 0.0002117773852441999,
+        "n": 300.0,
+        "r2": 0.9992485894823172,
+        "rmse": 0.014552573148560356
+      },
+      "replay_consolidation": {
+        "accepted": true,
+        "new_task_mse": 0.3407747047024932,
+        "old_task_mse": 0.03953540310892208
+      },
+      "seed": 1,
+      "single_anomaly": {
+        "accepted": false,
+        "new_task_mse": 0.5324463910809379
+      },
+      "update_accepted": true
+    },
+    {
+      "adaptation_curve": [
+        {
+          "accepted": true,
+          "epochs": 5,
+          "new_task_mse": 0.08013631244641703,
+          "old_task_mse": 0.507167732466551,
+          "validation_after": 0.04525100687200556,
+          "validation_before": 0.3842999759690822
+        },
+        {
+          "accepted": true,
+          "epochs": 10,
+          "new_task_mse": 0.010980585448189842,
+          "old_task_mse": 0.5534481264464999,
+          "validation_after": 0.006690512591905825,
+          "validation_before": 0.3842999759690822
+        },
+        {
+          "accepted": true,
+          "epochs": 25,
+          "new_task_mse": 0.0036368577633154892,
+          "old_task_mse": 0.5642285627242803,
+          "validation_after": 0.002558430833140794,
+          "validation_before": 0.3842999759690822
+        },
+        {
+          "accepted": true,
+          "epochs": 50,
+          "new_task_mse": 0.002030324221974888,
+          "old_task_mse": 0.5776805209047295,
+          "validation_after": 0.0016677513506866736,
+          "validation_before": 0.3842999759690822
+        }
+      ],
+      "contaminated_batch": {
+        "accepted": true,
+        "new_task_mse": 0.5878878588103118
+      },
+      "new_task_after": {
+        "mae": 0.03312487908160003,
+        "max_abs_error": 0.18022500640515093,
+        "mse": 0.002030324221974888,
+        "n": 300.0,
+        "r2": 0.9925249408420399,
+        "rmse": 0.045059119187739215
+      },
+      "new_task_before": {
+        "mae": 0.6082610461175525,
+        "max_abs_error": 1.7198733455932291,
+        "mse": 0.5270544954111478,
+        "n": 300.0,
+        "r2": -0.940460292019248,
+        "rmse": 0.7259851895260314
+      },
+      "old_task_after": {
+        "mae": 0.6356792471218424,
+        "max_abs_error": 1.8585474722098512,
+        "mse": 0.5776805209047295,
+        "n": 300.0,
+        "r2": -0.9163869623039445,
+        "rmse": 0.7600529724333229
+      },
+      "old_task_before": {
+        "mae": 0.014482560638186962,
+        "max_abs_error": 0.1133720184965149,
+        "mse": 0.00040772363884968536,
+        "n": 300.0,
+        "r2": 0.9986474249391498,
+        "rmse": 0.020192167760042144
+      },
+      "replay_consolidation": {
+        "accepted": true,
+        "new_task_mse": 0.3183164203801607,
+        "old_task_mse": 0.04596016252471659
+      },
+      "seed": 2,
+      "single_anomaly": {
+        "accepted": false,
+        "new_task_mse": 0.5270544954111478
+      },
+      "update_accepted": true
+    }
+  ],
+  "research_question": "Can the learner adapt when the underlying rule changes while preserving performance on the earlier task?",
+  "summary": {
+    "accepted_update_rate": 1.0,
+    "new_task_after": {
+      "max": 0.002864742723959319,
+      "mean": 0.0023543090735632186,
+      "min": 0.002030324221974888,
+      "n": 3.0,
+      "std": 0.0004473655385097636
+    },
+    "new_task_before": {
+      "max": 0.5476010342443565,
+      "mean": 0.5357006402454808,
+      "min": 0.5270544954111478,
+      "n": 3.0,
+      "std": 0.010652824401295348
+    },
+    "old_task_after": {
+      "max": 0.5776805209047295,
+      "mean": 0.5477213671070392,
+      "min": 0.5182555372089559,
+      "n": 3.0,
+      "std": 0.029715563231464813
+    },
+    "old_task_before": {
+      "max": 0.00040772363884968536,
+      "mean": 0.0003256689554308198,
+      "min": 0.0002117773852441999,
+      "n": 3.0,
+      "std": 0.00010177879982984378
+    },
+    "old_task_deterioration": 0.5473956981516084,
+    "replay_consolidation_new_task_mse": {
+      "max": 0.3690638126592905,
+      "mean": 0.3427183125806481,
+      "min": 0.3183164203801607,
+      "n": 3.0,
+      "std": 0.02542946449438111
+    },
+    "replay_consolidation_old_task_mse": {
+      "max": 0.04596016252471659,
+      "mean": 0.038171473605870636,
+      "min": 0.02901885518397325,
+      "n": 3.0,
+      "std": 0.008552613715721741
+    },
+    "single_anomaly_acceptance_rate": 0.0
+  },
+  "title": "Representation revision under a changed rule"
+}

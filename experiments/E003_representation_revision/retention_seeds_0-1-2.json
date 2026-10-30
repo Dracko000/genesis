@@ -1,0 +1,1441 @@
+{
+  "config": {
+    "adaptation_epochs": [
+      5,
+      10,
+      25,
+      50
+    ],
+    "anomaly_magnitude": 25.0,
+    "changed_rule": "changed",
+    "max_residual_z": 6.0,
+    "min_accepted_fraction": 0.5,
+    "min_batch_size": 3,
+    "min_new_task_improvement": 1e-06,
+    "n_new": 120,
+    "n_new_val": 100,
+    "n_test": 300,
+    "n_train": 400,
+    "neural": {
+      "activation": "relu",
+      "batch_size": 32,
+      "epochs": 300,
+      "hidden_sizes": [
+        32,
+        32
+      ],
+      "learning_rate": 0.01,
+      "seed": 0,
+      "standardize_target": true,
+      "weight_decay": 0.0001
+    },
+    "old_task_max_ratio": 4.0,
+    "old_task_mse_floor_fraction": 0.2,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "stable_rule": "interaction",
+    "success_new_task_improvement": 0.1
+  },
+  "criterion": {
+    "contaminated_outlier_rejection_rate": 1.0,
+    "isolated_anomaly_acceptance_rate": 0.0,
+    "met": true,
+    "new_task_relative_improvement": 0.36024285424859676,
+    "retention_within_budget": true,
+    "statement": "At the largest adaptation budget, dual-gated replay must improve new-task MSE by at least 10%, keep mean old-task MSE within the predeclared retention budget, reject every isolated anomaly, and filter the injected outlier from every contaminated batch."
+  },
+  "experiment": "E003-v2",
+  "hypothesis": "Evidence filtering plus a dual new/old gate rejects isolated and embedded outliers, and replay keeps old-task error inside the retention budget at a modest cost to new-task adaptation.",
+  "limitations": [
+    "The retention budget is a design choice, not a universal law; it is declared before the run and reported with every condition.",
+    "Old-task validation and test come from the same synthetic rule.",
+    "The synthetic rule-change pair is low-dimensional.",
+    "Replay uses the full earlier training set here; bounded buffers are tested separately by the ReplayBuffer unit tests."
+  ],
+  "per_seed": [
+    {
+      "contaminated_batch": {
+        "accepted": true,
+        "n_accepted": 120,
+        "n_total": 121,
+        "new_task_mse": 0.3690638126592905,
+        "old_task_mse": 0.02901885518397325,
+        "outlier_rejected": true
+      },
+      "curve": [
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": null,
+          "candidate_new_validation_mse": 0.06879986564661154,
+          "candidate_old_task_change": null,
+          "candidate_old_validation_mse": null,
+          "condition": "legacy_gate",
+          "epochs": 5,
+          "evidence": null,
+          "new_task_mse": 0.0836728034538196,
+          "old_task_mse": 0.398057772480437,
+          "reason": "validation error improved",
+          "retention_budget": null
+        },
+        {
+          "accepted": false,
+          "candidate_new_task_improvement": 0.8419663797332945,
+          "candidate_new_validation_mse": 0.06879986564661154,
+          "candidate_old_task_change": 1227.7523895318357,
+          "candidate_old_validation_mse": 0.45209283046116316,
+          "condition": "dual_gate",
+          "epochs": 5,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": 0.077651255966251,
+            "residual_scale": 0.6775890352264939,
+            "sufficient": true
+          },
+          "new_task_mse": 0.5476010342443565,
+          "old_task_mse": 0.00035750584219857394,
+          "reason": "old-task retention budget exceeded",
+          "retention_budget": 0.05160756938363029
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": 0.28116546708694007,
+          "candidate_new_validation_mse": 0.3129442912406824,
+          "candidate_old_task_change": 82.5457689003663,
+          "candidate_old_validation_mse": 0.030738856304166905,
+          "condition": "dual_gate_replay",
+          "epochs": 5,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": 0.077651255966251,
+            "residual_scale": 0.6775890352264939,
+            "sufficient": true
+          },
+          "new_task_mse": 0.3955090699529358,
+          "old_task_mse": 0.025156613876448523,
+          "reason": "new task improved and retention budget respected",
+          "retention_budget": 0.05160756938363029
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": null,
+          "candidate_new_validation_mse": 0.02756085678490163,
+          "candidate_old_task_change": null,
+          "candidate_old_validation_mse": null,
+          "condition": "legacy_gate",
+          "epochs": 10,
+          "evidence": null,
+          "new_task_mse": 0.034055140455580314,
+          "old_task_mse": 0.4357747203814754,
+          "reason": "validation error improved",
+          "retention_budget": null
+        },
+        {
+          "accepted": false,
+          "candidate_new_task_improvement": 0.9366925802189454,
+          "candidate_new_validation_mse": 0.02756085678490163,
+          "candidate_old_task_change": 1334.5072243319212,
+          "candidate_old_validation_mse": 0.4913709599210563,
+          "condition": "dual_gate",
+          "epochs": 10,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": 0.077651255966251,
+            "residual_scale": 0.6775890352264939,
+            "sufficient": true
+          },
+          "new_task_mse": 0.5476010342443565,
+          "old_task_mse": 0.00035750584219857394,
+          "reason": "old-task retention budget exceeded",
+          "retention_budget": 0.05160756938363029
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": 0.28086166516926014,
+          "candidate_new_validation_mse": 0.3130765512691769,
+          "candidate_old_task_change": 63.872871292895326,
+          "candidate_old_validation_mse": 0.0238685680311248,
+          "condition": "dual_gate_replay",
+          "epochs": 10,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": 0.077651255966251,
+            "residual_scale": 0.6775890352264939,
+            "sufficient": true
+          },
+          "new_task_mse": 0.39781756237976085,
+          "old_task_mse": 0.02199476951320723,
+          "reason": "new task improved and retention budget respected",
+          "retention_budget": 0.05160756938363029
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": null,
+          "candidate_new_validation_mse": 0.002559956356036595,
+          "candidate_old_task_change": null,
+          "candidate_old_validation_mse": null,
+          "condition": "legacy_gate",
+          "epochs": 25,
+          "evidence": null,
+          "new_task_mse": 0.003531161903410122,
+          "old_task_mse": 0.5201164125740995,
+          "reason": "validation error improved",
+          "retention_budget": null
+        },
+        {
+          "accepted": false,
+          "candidate_new_task_improvement": 0.9941197680131058,
+          "candidate_new_validation_mse": 0.002559956356036595,
+          "candidate_old_task_change": 1524.092307626297,
+          "candidate_old_validation_mse": 0.561124685447829,
+          "condition": "dual_gate",
+          "epochs": 25,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": 0.077651255966251,
+            "residual_scale": 0.6775890352264939,
+            "sufficient": true
+          },
+          "new_task_mse": 0.5476010342443565,
+          "old_task_mse": 0.00035750584219857394,
+          "reason": "old-task retention budget exceeded",
+          "retention_budget": 0.05160756938363029
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": 0.4086622656735507,
+          "candidate_new_validation_mse": 0.25743861720544714,
+          "candidate_old_task_change": 122.17239635898072,
+          "candidate_old_validation_mse": 0.04531861567799873,
+          "condition": "dual_gate_replay",
+          "epochs": 25,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": 0.077651255966251,
+            "residual_scale": 0.6775890352264939,
+            "sufficient": true
+          },
+          "new_task_mse": 0.354421416196156,
+          "old_task_mse": 0.03800416660479835,
+          "reason": "new task improved and retention budget respected",
+          "retention_budget": 0.05160756938363029
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": null,
+          "candidate_new_validation_mse": 0.0016341767808170679,
+          "candidate_old_task_change": null,
+          "candidate_old_validation_mse": null,
+          "condition": "legacy_gate",
+          "epochs": 50,
+          "evidence": null,
+          "new_task_mse": 0.002167860274755448,
+          "old_task_mse": 0.5182555372089559,
+          "reason": "validation error improved",
+          "retention_budget": null
+        },
+        {
+          "accepted": false,
+          "candidate_new_task_improvement": 0.9962462881227875,
+          "candidate_new_validation_mse": 0.0016341767808170679,
+          "candidate_old_task_change": 1492.868119495449,
+          "candidate_old_validation_mse": 0.5496364216518128,
+          "condition": "dual_gate",
+          "epochs": 50,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": 0.077651255966251,
+            "residual_scale": 0.6775890352264939,
+            "sufficient": true
+          },
+          "new_task_mse": 0.5476010342443565,
+          "old_task_mse": 0.00035750584219857394,
+          "reason": "old-task retention budget exceeded",
+          "retention_budget": 0.05160756938363029
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": 0.35626795336931133,
+          "candidate_new_validation_mse": 0.28024845754888017,
+          "candidate_old_task_change": 75.64931161331683,
+          "candidate_old_validation_mse": 0.02820145420296356,
+          "condition": "dual_gate_replay",
+          "epochs": 50,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": 0.077651255966251,
+            "residual_scale": 0.6775890352264939,
+            "sufficient": true
+          },
+          "new_task_mse": 0.3690638126592905,
+          "old_task_mse": 0.02901885518397325,
+          "reason": "new task improved and retention budget respected",
+          "retention_budget": 0.05160756938363029
+        }
+      ],
+      "history": [
+        {
+          "accepted": true,
+          "after_new": 0.28024845754888017,
+          "after_old": 0.02820145420296356,
+          "before_new": 0.43534955113033186,
+          "before_old": 0.00036792834285629674,
+          "details": {
+            "evidence_ok": true,
+            "gate": "dual",
+            "new_task_improved": true,
+            "retention_ok": true
+          },
+          "evidence": {
+            "accepted_fraction": 0.9917355371900827,
+            "n_accepted": 120,
+            "n_rejected": 1,
+            "n_total": 121,
+            "reasons": [],
+            "rejected": [
+              {
+                "id": "anomaly-0",
+                "residual": 25.390655918856233,
+                "z_score": 34.15359755603463
+              }
+            ],
+            "residual_center": 0.09367996998846884,
+            "residual_scale": 0.7406826149826203,
+            "sufficient": true
+          },
+          "n_replay_samples": 400,
+          "n_update_samples": 120,
+          "new_task_relative_improvement": 0.35626795336931133,
+          "old_outcome_variance": 0.25803784691815146,
+          "old_task_relative_change": 75.64931161331683,
+          "policy": {
+            "epochs": 50,
+            "min_accepted_fraction": 0.5,
+            "min_new_task_improvement": 1e-06,
+            "old_task_max_ratio": 4.0,
+            "old_task_mse_floor_fraction": 0.2
+          },
+          "reason": "new task improved and retention budget respected",
+          "retention_budget": 0.05160756938363029,
+          "state_restored": false
+        }
+      ],
+      "isolated_anomaly": {
+        "accepted": false,
+        "evidence": {
+          "accepted_fraction": 0.0,
+          "n_accepted": 0,
+          "n_rejected": 0,
+          "n_total": 1,
+          "reasons": [
+            "batch smaller than min_batch_size=3"
+          ],
+          "rejected": [],
+          "residual_center": 25.39065588905391,
+          "residual_scale": 1e-06,
+          "sufficient": false
+        },
+        "reason": "update rejected before training: insufficient evidence"
+      },
+      "new_task_before": {
+        "mae": 0.6247099026055722,
+        "max_abs_error": 1.7822790846260825,
+        "mse": 0.5476010342443565,
+        "n": 300.0,
+        "r2": -1.0851619045177228,
+        "rmse": 0.7400006988134245
+      },
+      "old_task_before": {
+        "mae": 0.015824665057307855,
+        "max_abs_error": 0.059004824590785265,
+        "mse": 0.00035750584219857394,
+        "n": 300.0,
+        "r2": 0.9986790987260801,
+        "rmse": 0.018907824893376127
+      },
+      "seed": 0
+    },
+    {
+      "contaminated_batch": {
+        "accepted": true,
+        "n_accepted": 120,
+        "n_total": 121,
+        "new_task_mse": 0.3407747047024932,
+        "old_task_mse": 0.03953540310892208,
+        "outlier_rejected": true
+      },
+      "curve": [
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": null,
+          "candidate_new_validation_mse": 0.09861036810995849,
+          "candidate_old_task_change": null,
+          "candidate_old_validation_mse": null,
+          "condition": "legacy_gate",
+          "epochs": 5,
+          "evidence": null,
+          "new_task_mse": 0.0744157871147223,
+          "old_task_mse": 0.49277726316439374,
+          "reason": "validation error improved",
+          "retention_budget": null
+        },
+        {
+          "accepted": false,
+          "candidate_new_task_improvement": 0.8615567436371752,
+          "candidate_new_validation_mse": 0.09861036810995849,
+          "candidate_old_task_change": 2113.7937196897847,
+          "candidate_old_validation_mse": 0.3660880235859435,
+          "condition": "dual_gate",
+          "epochs": 5,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": 0.08442512080974168,
+            "residual_scale": 0.7435257799348736,
+            "sufficient": true
+          },
+          "new_task_mse": 0.5324463910809379,
+          "old_task_mse": 0.0002117773852441999,
+          "reason": "old-task retention budget exceeded",
+          "retention_budget": 0.04805205005344073
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": 0.42227119193405166,
+          "candidate_new_validation_mse": 0.41150469822673474,
+          "candidate_old_task_change": 149.9361186482123,
+          "candidate_old_validation_mse": 0.026128271920423003,
+          "condition": "dual_gate_replay",
+          "epochs": 5,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": 0.08442512080974168,
+            "residual_scale": 0.7435257799348736,
+            "sufficient": true
+          },
+          "new_task_mse": 0.3137555439393904,
+          "old_task_mse": 0.033567025096351684,
+          "reason": "new task improved and retention budget respected",
+          "retention_budget": 0.04805205005344073
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": null,
+          "candidate_new_validation_mse": 0.014192704085320244,
+          "candidate_old_task_change": null,
+          "candidate_old_validation_mse": null,
+          "condition": "legacy_gate",
+          "epochs": 10,
+          "evidence": null,
+          "new_task_mse": 0.011456509478719621,
+          "old_task_mse": 0.5208534046481462,
+          "reason": "validation error improved",
+          "retention_budget": null
+        },
+        {
+          "accepted": false,
+          "candidate_new_task_improvement": 0.9800742639153857,
+          "candidate_new_validation_mse": 0.014192704085320244,
+          "candidate_old_task_change": 2565.7845536985214,
+          "candidate_old_validation_mse": 0.4443313196391836,
+          "condition": "dual_gate",
+          "epochs": 10,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": 0.08442512080974168,
+            "residual_scale": 0.7435257799348736,
+            "sufficient": true
+          },
+          "new_task_mse": 0.5324463910809379,
+          "old_task_mse": 0.0002117773852441999,
+          "reason": "old-task retention budget exceeded",
+          "retention_budget": 0.04805205005344073
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": 0.3781438673643677,
+          "candidate_new_validation_mse": 0.4429357107140472,
+          "candidate_old_task_change": 148.02297045884723,
+          "candidate_old_validation_mse": 0.025797090381083826,
+          "condition": "dual_gate_replay",
+          "epochs": 10,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": 0.08442512080974168,
+            "residual_scale": 0.7435257799348736,
+            "sufficient": true
+          },
+          "new_task_mse": 0.34433857603787177,
+          "old_task_mse": 0.032515640743290976,
+          "reason": "new task improved and retention budget respected",
+          "retention_budget": 0.04805205005344073
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": null,
+          "candidate_new_validation_mse": 0.005632362288386637,
+          "candidate_old_task_change": null,
+          "candidate_old_validation_mse": null,
+          "condition": "legacy_gate",
+          "epochs": 25,
+          "evidence": null,
+          "new_task_mse": 0.003793097732622512,
+          "old_task_mse": 0.547246246358486,
+          "reason": "validation error improved",
+          "retention_budget": null
+        },
+        {
+          "accepted": false,
+          "candidate_new_task_improvement": 0.9920924889424415,
+          "candidate_new_validation_mse": 0.005632362288386637,
+          "candidate_old_task_change": 2651.4864855039523,
+          "candidate_old_validation_mse": 0.4591670223084491,
+          "condition": "dual_gate",
+          "epochs": 25,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": 0.08442512080974168,
+            "residual_scale": 0.7435257799348736,
+            "sufficient": true
+          },
+          "new_task_mse": 0.5324463910809379,
+          "old_task_mse": 0.0002117773852441999,
+          "reason": "old-task retention budget exceeded",
+          "retention_budget": 0.04805205005344073
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": 0.42885478481633965,
+          "candidate_new_validation_mse": 0.40681533642851825,
+          "candidate_old_task_change": 211.0920175062504,
+          "candidate_old_validation_mse": 0.036714856292748996,
+          "condition": "dual_gate_replay",
+          "epochs": 25,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": 0.08442512080974168,
+            "residual_scale": 0.7435257799348736,
+            "sufficient": true
+          },
+          "new_task_mse": 0.32094788242806616,
+          "old_task_mse": 0.04135100546997562,
+          "reason": "new task improved and retention budget respected",
+          "retention_budget": 0.04805205005344073
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": null,
+          "candidate_new_validation_mse": 0.0045989202304937415,
+          "candidate_old_task_change": null,
+          "candidate_old_validation_mse": null,
+          "condition": "legacy_gate",
+          "epochs": 50,
+          "evidence": null,
+          "new_task_mse": 0.002864742723959319,
+          "old_task_mse": 0.5472280432074323,
+          "reason": "validation error improved",
+          "retention_budget": null
+        },
+        {
+          "accepted": false,
+          "candidate_new_task_improvement": 0.9935433818505527,
+          "candidate_new_validation_mse": 0.0045989202304937415,
+          "candidate_old_task_change": 2635.0038904611583,
+          "candidate_old_validation_mse": 0.45631375081127956,
+          "condition": "dual_gate",
+          "epochs": 50,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": 0.08442512080974168,
+            "residual_scale": 0.7435257799348736,
+            "sufficient": true
+          },
+          "new_task_mse": 0.5324463910809379,
+          "old_task_mse": 0.0002117773852441999,
+          "reason": "old-task retention budget exceeded",
+          "retention_budget": 0.04805205005344073
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": 0.3706679966025668,
+          "candidate_new_validation_mse": 0.4482606242355239,
+          "candidate_old_task_change": 210.11034224029837,
+          "candidate_old_validation_mse": 0.03654492030581581,
+          "condition": "dual_gate_replay",
+          "epochs": 50,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": 0.08442512080974168,
+            "residual_scale": 0.7435257799348736,
+            "sufficient": true
+          },
+          "new_task_mse": 0.3407747047024932,
+          "old_task_mse": 0.03953540310892208,
+          "reason": "new task improved and retention budget respected",
+          "retention_budget": 0.04805205005344073
+        }
+      ],
+      "history": [
+        {
+          "accepted": true,
+          "after_new": 0.4482606242355239,
+          "after_old": 0.03654492030581581,
+          "before_new": 0.7122800394952108,
+          "before_old": 0.00017310814770134854,
+          "details": {
+            "evidence_ok": true,
+            "gate": "dual",
+            "new_task_improved": true,
+            "retention_ok": true
+          },
+          "evidence": {
+            "accepted_fraction": 0.9917355371900827,
+            "n_accepted": 120,
+            "n_rejected": 1,
+            "n_total": 121,
+            "reasons": [],
+            "rejected": [
+              {
+                "id": "anomaly-1",
+                "residual": 24.816853870563396,
+                "z_score": 33.057350378083164
+              }
+            ],
+            "residual_center": 0.08625857455098795,
+            "residual_scale": 0.7481118423940186,
+            "sufficient": true
+          },
+          "n_replay_samples": 400,
+          "n_update_samples": 120,
+          "new_task_relative_improvement": 0.3706679966025668,
+          "old_outcome_variance": 0.24026025026720363,
+          "old_task_relative_change": 210.11034224029837,
+          "policy": {
+            "epochs": 50,
+            "min_accepted_fraction": 0.5,
+            "min_new_task_improvement": 1e-06,
+            "old_task_max_ratio": 4.0,
+            "old_task_mse_floor_fraction": 0.2
+          },
+          "reason": "new task improved and retention budget respected",
+          "retention_budget": 0.04805205005344073,
+          "state_restored": false
+        }
+      ],
+      "isolated_anomaly": {
+        "accepted": false,
+        "evidence": {
+          "accepted_fraction": 0.0,
+          "n_accepted": 0,
+          "n_rejected": 0,
+          "n_total": 1,
+          "reasons": [
+            "batch smaller than min_batch_size=3"
+          ],
+          "rejected": [],
+          "residual_center": 24.816853870563396,
+          "residual_scale": 1e-06,
+          "sufficient": false
+        },
+        "reason": "update rejected before training: insufficient evidence"
+      },
+      "new_task_before": {
+        "mae": 0.6011016573858778,
+        "max_abs_error": 1.7415787248651526,
+        "mse": 0.5324463910809379,
+        "n": 300.0,
+        "r2": -1.1786943130900465,
+        "rmse": 0.729689242815692
+      },
+      "old_task_before": {
+        "mae": 0.010639463640552608,
+        "max_abs_error": 0.060271760714062594,
+        "mse": 0.0002117773852441999,
+        "n": 300.0,
+        "r2": 0.9992485894823172,
+        "rmse": 0.014552573148560356
+      },
+      "seed": 1
+    },
+    {
+      "contaminated_batch": {
+        "accepted": true,
+        "n_accepted": 120,
+        "n_total": 121,
+        "new_task_mse": 0.3183164203801607,
+        "old_task_mse": 0.04596016252471659,
+        "outlier_rejected": true
+      },
+      "curve": [
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": null,
+          "candidate_new_validation_mse": 0.04525100687200556,
+          "candidate_old_task_change": null,
+          "candidate_old_validation_mse": null,
+          "condition": "legacy_gate",
+          "epochs": 5,
+          "evidence": null,
+          "new_task_mse": 0.08013631244641703,
+          "old_task_mse": 0.507167732466551,
+          "reason": "validation error improved",
+          "retention_budget": null
+        },
+        {
+          "accepted": false,
+          "candidate_new_task_improvement": 0.8822508204485391,
+          "candidate_new_validation_mse": 0.04525100687200556,
+          "candidate_old_task_change": 2002.6933429334406,
+          "candidate_old_validation_mse": 0.5659603298839464,
+          "condition": "dual_gate",
+          "epochs": 5,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": -0.03783012853974403,
+            "residual_scale": 0.774248218034553,
+            "sufficient": true
+          },
+          "new_task_mse": 0.5270544954111478,
+          "old_task_mse": 0.00040772363884968536,
+          "reason": "old-task retention budget exceeded",
+          "retention_budget": 0.06896183164529998
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": 0.3457664702655642,
+          "candidate_new_validation_mse": 0.2514219297551115,
+          "candidate_old_task_change": 122.53060935793127,
+          "candidate_old_validation_mse": 0.03489227763796693,
+          "condition": "dual_gate_replay",
+          "epochs": 5,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": -0.03783012853974403,
+            "residual_scale": 0.774248218034553,
+            "sufficient": true
+          },
+          "new_task_mse": 0.34019253018537604,
+          "old_task_mse": 0.033440052841195514,
+          "reason": "new task improved and retention budget respected",
+          "retention_budget": 0.06896183164529998
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": null,
+          "candidate_new_validation_mse": 0.006690512591905825,
+          "candidate_old_task_change": null,
+          "candidate_old_validation_mse": null,
+          "condition": "legacy_gate",
+          "epochs": 10,
+          "evidence": null,
+          "new_task_mse": 0.010980585448189842,
+          "old_task_mse": 0.5534481264464999,
+          "reason": "validation error improved",
+          "retention_budget": null
+        },
+        {
+          "accepted": false,
+          "candidate_new_task_improvement": 0.9825903902933262,
+          "candidate_new_validation_mse": 0.006690512591905825,
+          "candidate_old_task_change": 1943.042013127567,
+          "candidate_old_validation_mse": 0.5491113013566955,
+          "condition": "dual_gate",
+          "epochs": 10,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": -0.03783012853974403,
+            "residual_scale": 0.774248218034553,
+            "sufficient": true
+          },
+          "new_task_mse": 0.5270544954111478,
+          "old_task_mse": 0.00040772363884968536,
+          "reason": "old-task retention budget exceeded",
+          "retention_budget": 0.06896183164529998
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": 0.4252126835219109,
+          "candidate_new_validation_mse": 0.2208907519098629,
+          "candidate_old_task_change": 180.3711967007782,
+          "candidate_old_validation_mse": 0.051229846462402695,
+          "condition": "dual_gate_replay",
+          "epochs": 10,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": -0.03783012853974403,
+            "residual_scale": 0.774248218034553,
+            "sufficient": true
+          },
+          "new_task_mse": 0.31633806314929896,
+          "old_task_mse": 0.04783128390887029,
+          "reason": "new task improved and retention budget respected",
+          "retention_budget": 0.06896183164529998
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": null,
+          "candidate_new_validation_mse": 0.002558430833140794,
+          "candidate_old_task_change": null,
+          "candidate_old_validation_mse": null,
+          "condition": "legacy_gate",
+          "epochs": 25,
+          "evidence": null,
+          "new_task_mse": 0.0036368577633154892,
+          "old_task_mse": 0.5642285627242803,
+          "reason": "validation error improved",
+          "retention_budget": null
+        },
+        {
+          "accepted": false,
+          "candidate_new_task_improvement": 0.9933426203665789,
+          "candidate_new_validation_mse": 0.002558430833140794,
+          "candidate_old_task_change": 1971.389915698131,
+          "candidate_old_validation_mse": 0.5571184090046483,
+          "condition": "dual_gate",
+          "epochs": 25,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": -0.03783012853974403,
+            "residual_scale": 0.774248218034553,
+            "sufficient": true
+          },
+          "new_task_mse": 0.5270544954111478,
+          "old_task_mse": 0.00040772363884968536,
+          "reason": "old-task retention budget exceeded",
+          "retention_budget": 0.06896183164529998
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": 0.38126905737581257,
+          "candidate_new_validation_mse": 0.23777828638180282,
+          "candidate_old_task_change": 156.73433234922797,
+          "candidate_old_validation_mse": 0.04455341187074979,
+          "condition": "dual_gate_replay",
+          "epochs": 25,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": -0.03783012853974403,
+            "residual_scale": 0.774248218034553,
+            "sufficient": true
+          },
+          "new_task_mse": 0.3344212759397929,
+          "old_task_mse": 0.0408057553200069,
+          "reason": "new task improved and retention budget respected",
+          "retention_budget": 0.06896183164529998
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": null,
+          "candidate_new_validation_mse": 0.0016677513506866736,
+          "candidate_old_task_change": null,
+          "candidate_old_validation_mse": null,
+          "condition": "legacy_gate",
+          "epochs": 50,
+          "evidence": null,
+          "new_task_mse": 0.002030324221974888,
+          "old_task_mse": 0.5776805209047295,
+          "reason": "validation error improved",
+          "retention_budget": null
+        },
+        {
+          "accepted": false,
+          "candidate_new_task_improvement": 0.9956602876529431,
+          "candidate_new_validation_mse": 0.0016677513506866736,
+          "candidate_old_task_change": 2032.6027203474541,
+          "candidate_old_validation_mse": 0.5744084894626355,
+          "condition": "dual_gate",
+          "epochs": 50,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": -0.03783012853974403,
+            "residual_scale": 0.774248218034553,
+            "sufficient": true
+          },
+          "new_task_mse": 0.5270544954111478,
+          "old_task_mse": 0.00040772363884968536,
+          "reason": "old-task retention budget exceeded",
+          "retention_budget": 0.06896183164529998
+        },
+        {
+          "accepted": true,
+          "candidate_new_task_improvement": 0.40902072200174017,
+          "candidate_new_validation_mse": 0.2271133223329568,
+          "candidate_old_task_change": 179.13813259649237,
+          "candidate_old_validation_mse": 0.05088155695508319,
+          "condition": "dual_gate_replay",
+          "epochs": 50,
+          "evidence": {
+            "accepted_fraction": 1.0,
+            "n_accepted": 120,
+            "n_rejected": 0,
+            "n_total": 120,
+            "reasons": [],
+            "rejected": [],
+            "residual_center": -0.03783012853974403,
+            "residual_scale": 0.774248218034553,
+            "sufficient": true
+          },
+          "new_task_mse": 0.3183164203801607,
+          "old_task_mse": 0.04596016252471659,
+          "reason": "new task improved and retention budget respected",
+          "retention_budget": 0.06896183164529998
+        }
+      ],
+      "history": [
+        {
+          "accepted": true,
+          "after_new": 0.2271133223329568,
+          "after_old": 0.05088155695508319,
+          "before_new": 0.3842999759690822,
+          "before_old": 0.00028245855678462803,
+          "details": {
+            "evidence_ok": true,
+            "gate": "dual",
+            "new_task_improved": true,
+            "retention_ok": true
+          },
+          "evidence": {
+            "accepted_fraction": 0.9917355371900827,
+            "n_accepted": 120,
+            "n_rejected": 1,
+            "n_total": 121,
+            "reasons": [],
+            "rejected": [
+              {
+                "id": "anomaly-2",
+                "residual": 24.98227840354529,
+                "z_score": 31.637745286200122
+              }
+            ],
+            "residual_center": -0.0329688333553588,
+            "residual_scale": 0.790677306824766,
+            "sufficient": true
+          },
+          "n_replay_samples": 400,
+          "n_update_samples": 120,
+          "new_task_relative_improvement": 0.40902072200174017,
+          "old_outcome_variance": 0.3448091582264999,
+          "old_task_relative_change": 179.13813259649237,
+          "policy": {
+            "epochs": 50,
+            "min_accepted_fraction": 0.5,
+            "min_new_task_improvement": 1e-06,
+            "old_task_max_ratio": 4.0,
+            "old_task_mse_floor_fraction": 0.2
+          },
+          "reason": "new task improved and retention budget respected",
+          "retention_budget": 0.06896183164529998,
+          "state_restored": false
+        }
+      ],
+      "isolated_anomaly": {
+        "accepted": false,
+        "evidence": {
+          "accepted_fraction": 0.0,
+          "n_accepted": 0,
+          "n_rejected": 0,
+          "n_total": 1,
+          "reasons": [
+            "batch smaller than min_batch_size=3"
+          ],
+          "rejected": [],
+          "residual_center": 24.982278373742968,
+          "residual_scale": 1e-06,
+          "sufficient": false
+        },
+        "reason": "update rejected before training: insufficient evidence"
+      },
+      "new_task_before": {
+        "mae": 0.6082610461175525,
+        "max_abs_error": 1.7198733455932291,
+        "mse": 0.5270544954111478,
+        "n": 300.0,
+        "r2": -0.940460292019248,
+        "rmse": 0.7259851895260314
+      },
+      "old_task_before": {
+        "mae": 0.014482560638186962,
+        "max_abs_error": 0.1133720184965149,
+        "mse": 0.00040772363884968536,
+        "n": 300.0,
+        "r2": 0.9986474249391498,
+        "rmse": 0.020192167760042144
+      },
+      "seed": 2
+    }
+  ],
+  "research_question": "Can the learner adapt to a rule change while keeping earlier competence within a predeclared budget?",
+  "summary": {
+    "dual_gate": {
+      "10": {
+        "acceptance_rate": 0.0,
+        "candidate_new_validation_mse": {
+          "max": 0.02756085678490163,
+          "mean": 0.0161480244873759,
+          "min": 0.006690512591905825,
+          "n": 3.0,
+          "std": 0.01057167323982111
+        },
+        "candidate_old_validation_mse": {
+          "max": 0.5491113013566955,
+          "mean": 0.4949378603056451,
+          "min": 0.4443313196391836,
+          "n": 3.0,
+          "std": 0.05248097965878416
+        },
+        "new_task_mse": {
+          "max": 0.5476010342443565,
+          "mean": 0.5357006402454808,
+          "min": 0.5270544954111478,
+          "n": 3.0,
+          "std": 0.010652824401295348
+        },
+        "old_task_mse": {
+          "max": 0.00040772363884968536,
+          "mean": 0.0003256689554308198,
+          "min": 0.0002117773852441999,
+          "n": 3.0,
+          "std": 0.00010177879982984378
+        }
+      },
+      "25": {
+        "acceptance_rate": 0.0,
+        "candidate_new_validation_mse": {
+          "max": 0.005632362288386637,
+          "mean": 0.003583583159188009,
+          "min": 0.002558430833140794,
+          "n": 3.0,
+          "std": 0.0017742949365832455
+        },
+        "candidate_old_validation_mse": {
+          "max": 0.561124685447829,
+          "mean": 0.525803372253642,
+          "min": 0.4591670223084491,
+          "n": 3.0,
+          "std": 0.05774352702466716
+        },
+        "new_task_mse": {
+          "max": 0.5476010342443565,
+          "mean": 0.5357006402454808,
+          "min": 0.5270544954111478,
+          "n": 3.0,
+          "std": 0.010652824401295348
+        },
+        "old_task_mse": {
+          "max": 0.00040772363884968536,
+          "mean": 0.0003256689554308198,
+          "min": 0.0002117773852441999,
+          "n": 3.0,
+          "std": 0.00010177879982984378
+        }
+      },
+      "5": {
+        "acceptance_rate": 0.0,
+        "candidate_new_validation_mse": {
+          "max": 0.09861036810995849,
+          "mean": 0.07088708020952521,
+          "min": 0.04525100687200556,
+          "n": 3.0,
+          "std": 0.026740843412359258
+        },
+        "candidate_old_validation_mse": {
+          "max": 0.5659603298839464,
+          "mean": 0.46138039464368436,
+          "min": 0.3660880235859435,
+          "n": 3.0,
+          "std": 0.10025930800955096
+        },
+        "new_task_mse": {
+          "max": 0.5476010342443565,
+          "mean": 0.5357006402454808,
+          "min": 0.5270544954111478,
+          "n": 3.0,
+          "std": 0.010652824401295348
+        },
+        "old_task_mse": {
+          "max": 0.00040772363884968536,
+          "mean": 0.0003256689554308198,
+          "min": 0.0002117773852441999,
+          "n": 3.0,
+          "std": 0.00010177879982984378
+        }
+      },
+      "50": {
+        "acceptance_rate": 0.0,
+        "candidate_new_validation_mse": {
+          "max": 0.0045989202304937415,
+          "mean": 0.0026336161206658277,
+          "min": 0.0016341767808170679,
+          "n": 3.0,
+          "std": 0.0017020860718586909
+        },
+        "candidate_old_validation_mse": {
+          "max": 0.5744084894626355,
+          "mean": 0.5267862206419093,
+          "min": 0.45631375081127956,
+          "n": 3.0,
+          "std": 0.06227512014382437
+        },
+        "new_task_mse": {
+          "max": 0.5476010342443565,
+          "mean": 0.5357006402454808,
+          "min": 0.5270544954111478,
+          "n": 3.0,
+          "std": 0.010652824401295348
+        },
+        "old_task_mse": {
+          "max": 0.00040772363884968536,
+          "mean": 0.0003256689554308198,
+          "min": 0.0002117773852441999,
+          "n": 3.0,
+          "std": 0.00010177879982984378
+        }
+      }
+    },
+    "dual_gate_replay": {
+      "10": {
+        "acceptance_rate": 1.0,
+        "candidate_new_validation_mse": {
+          "max": 0.4429357107140472,
+          "mean": 0.3256343379643623,
+          "min": 0.2208907519098629,
+          "n": 3.0,
+          "std": 0.11155386339163385
+        },
+        "candidate_old_validation_mse": {
+          "max": 0.051229846462402695,
+          "mean": 0.03363183495820377,
+          "min": 0.0238685680311248,
+          "n": 3.0,
+          "std": 0.015270799137242656
+        },
+        "new_task_mse": {
+          "max": 0.39781756237976085,
+          "mean": 0.35283140052231055,
+          "min": 0.31633806314929896,
+          "n": 3.0,
+          "std": 0.04139834839102065
+        },
+        "old_task_mse": {
+          "max": 0.04783128390887029,
+          "mean": 0.034113898055122834,
+          "min": 0.02199476951320723,
+          "n": 3.0,
+          "std": 0.012992197229700759
+        }
+      },
+      "25": {
+        "acceptance_rate": 1.0,
+        "candidate_new_validation_mse": {
+          "max": 0.40681533642851825,
+          "mean": 0.3006774133385894,
+          "min": 0.23777828638180282,
+          "n": 3.0,
+          "std": 0.09244228572686053
+        },
+        "candidate_old_validation_mse": {
+          "max": 0.04531861567799873,
+          "mean": 0.04219562794716584,
+          "min": 0.036714856292748996,
+          "n": 3.0,
+          "std": 0.004761882785469571
+        },
+        "new_task_mse": {
+          "max": 0.354421416196156,
+          "mean": 0.336596858188005,
+          "min": 0.32094788242806616,
+          "n": 3.0,
+          "std": 0.016842483021214986
+        },
+        "old_task_mse": {
+          "max": 0.04135100546997562,
+          "mean": 0.04005364246492696,
+          "min": 0.03800416660479835,
+          "n": 3.0,
+          "std": 0.0017957137598870391
+        }
+      },
+      "5": {
+        "acceptance_rate": 1.0,
+        "candidate_new_validation_mse": {
+          "max": 0.41150469822673474,
+          "mean": 0.3252903064075095,
+          "min": 0.2514219297551115,
+          "n": 3.0,
+          "std": 0.08075234521832463
+        },
+        "candidate_old_validation_mse": {
+          "max": 0.03489227763796693,
+          "mean": 0.030586468620852278,
+          "min": 0.026128271920423003,
+          "n": 3.0,
+          "std": 0.004383989685070569
+        },
+        "new_task_mse": {
+          "max": 0.3955090699529358,
+          "mean": 0.34981904802590075,
+          "min": 0.3137555439393904,
+          "n": 3.0,
+          "std": 0.04171824706543067
+        },
+        "old_task_mse": {
+          "max": 0.033567025096351684,
+          "mean": 0.03072123060466524,
+          "min": 0.025156613876448523,
+          "n": 3.0,
+          "std": 0.004819517609404167
+        }
+      },
+      "50": {
+        "acceptance_rate": 1.0,
+        "candidate_new_validation_mse": {
+          "max": 0.4482606242355239,
+          "mean": 0.3185408013724536,
+          "min": 0.2271133223329568,
+          "n": 3.0,
+          "std": 0.11543942126207736
+        },
+        "candidate_old_validation_mse": {
+          "max": 0.05088155695508319,
+          "mean": 0.03854264382128752,
+          "min": 0.02820145420296356,
+          "n": 3.0,
+          "std": 0.011471265825743798
+        },
+        "new_task_mse": {
+          "max": 0.3690638126592905,
+          "mean": 0.3427183125806481,
+          "min": 0.3183164203801607,
+          "n": 3.0,
+          "std": 0.02542946449438111
+        },
+        "old_task_mse": {
+          "max": 0.04596016252471659,
+          "mean": 0.038171473605870636,
+          "min": 0.02901885518397325,
+          "n": 3.0,
+          "std": 0.008552613715721741
+        }
+      }
+    },
+    "legacy_gate": {
+      "10": {
+        "acceptance_rate": 1.0,
+        "candidate_new_validation_mse": {
+          "max": 0.02756085678490163,
+          "mean": 0.0161480244873759,
+          "min": 0.006690512591905825,
+          "n": 3.0,
+          "std": 0.01057167323982111
+        },
+        "candidate_old_validation_mse": null,
+        "new_task_mse": {
+          "max": 0.034055140455580314,
+          "mean": 0.018830745127496593,
+          "min": 0.010980585448189842,
+          "n": 3.0,
+          "std": 0.01318686034467803
+        },
+        "old_task_mse": {
+          "max": 0.5534481264464999,
+          "mean": 0.5033587504920405,
+          "min": 0.4357747203814754,
+          "n": 3.0,
+          "std": 0.060756109295834144
+        }
+      },
+      "25": {
+        "acceptance_rate": 1.0,
+        "candidate_new_validation_mse": {
+          "max": 0.005632362288386637,
+          "mean": 0.003583583159188009,
+          "min": 0.002558430833140794,
+          "n": 3.0,
+          "std": 0.0017742949365832455
+        },
+        "candidate_old_validation_mse": null,
+        "new_task_mse": {
+          "max": 0.003793097732622512,
+          "mean": 0.0036537057997827077,
+          "min": 0.003531161903410122,
+          "n": 3.0,
+          "std": 0.00013177817310122399
+        },
+        "old_task_mse": {
+          "max": 0.5642285627242803,
+          "mean": 0.5438637405522887,
+          "min": 0.5201164125740995,
+          "n": 3.0,
+          "std": 0.02224975183827328
+        }
+      },
+      "5": {
+        "acceptance_rate": 1.0,
+        "candidate_new_validation_mse": {
+          "max": 0.09861036810995849,
+          "mean": 0.07088708020952521,
+          "min": 0.04525100687200556,
+          "n": 3.0,
+          "std": 0.026740843412359258
+        },
+        "candidate_old_validation_mse": null,
+        "new_task_mse": {
+          "max": 0.0836728034538196,
+          "mean": 0.07940830100498632,
+          "min": 0.0744157871147223,
+          "n": 3.0,
+          "std": 0.00467125126381777
+        },
+        "old_task_mse": {
+          "max": 0.507167732466551,
+          "mean": 0.46600092270379384,
+          "min": 0.398057772480437,
+          "n": 3.0,
+          "std": 0.05927879172511292
+        }
+      },
+      "50": {
+        "acceptance_rate": 1.0,
+        "candidate_new_validation_mse": {
+          "max": 0.0045989202304937415,
+          "mean": 0.0026336161206658277,
+          "min": 0.0016341767808170679,
+          "n": 3.0,
+          "std": 0.0017020860718586909
+        },
+        "candidate_old_validation_mse": null,
+        "new_task_mse": {
+          "max": 0.002864742723959319,
+          "mean": 0.0023543090735632186,
+          "min": 0.002030324221974888,
+          "n": 3.0,
+          "std": 0.0004473655385097636
+        },
+        "old_task_mse": {
+          "max": 0.5776805209047295,
+          "mean": 0.5477213671070392,
+          "min": 0.5182555372089559,
+          "n": 3.0,
+          "std": 0.029715563231464813
+        }
+      }
+    }
+  },
+  "title": "Dual-gated representation revision with retention"
+}

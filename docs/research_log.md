@@ -103,3 +103,81 @@ E002 diagnostic follow-up (encoder-only transfer, target-statistic reset,
 warm-up schedule sweep) to distinguish an optimisation artefact from a genuine
 representation effect. Secondary: replay scheduling for E003 retention without
 the observed adaptation slowdown.
+
+---
+
+## 2026-10-30 — Retention and transfer upgrade
+
+### Baseline freeze
+
+Before changing revision logic, the legacy E002 and E003 runs were reproduced
+with the current code into new files
+(`baseline_pre_upgrade.json`). `summary` and `criterion` matched the committed
+results exactly. Details are in `docs/baseline_audit.md`.
+
+### Implemented
+
+- `EvidenceValidator` (median/MAD residual filter, minimum batch size).
+- `RetentionRevisionController` with a dual new/old gate, replay, rollback and
+  structured revision history.
+- E002-v2 transfer matrix with related/unrelated rule pairs and matched target
+  budgets (`E002-DIAG`).
+- E003-v2 retention comparison (`E003-RETENTION`).
+- Hidden-activation, ablation and linear-CKA helpers, plus E005.
+- API runners and `/experiments/{id}/revisions`; dashboard revision history.
+- New rules: `linear_alt`, `interaction_alt`, `partial_interaction`.
+
+Full test suite: `py -m pytest` → 72 passed, 1 dependency deprecation warning.
+
+### E003-v2 — dual-gated retention (confirmatory)
+
+Command: `py scripts/run_experiment.py E003-RETENTION`
+
+| Condition (50 epochs) | Accepted | New MSE | Old MSE |
+| --- | --- | --- | --- |
+| Legacy gate | 3/3 | 0.00235 | 0.54772 |
+| Dual gate | 0/3 | 0.53570 (restored) | 0.00033 (restored) |
+| Dual gate + replay | 3/3 | 0.34272 | 0.03817 |
+
+Retention budget was ~0.051. Isolated-anomaly acceptance 0/3; contaminated
+outlier filtered 3/3. The declared criterion was met. Interpretation: the dual
+gate prevents catastrophic forgetting by refusing unpreserved updates; replay is
+what actually adapts while staying inside the budget.
+
+### E002-v2 — fair transfer diagnostics (mixed)
+
+Command: `py scripts/run_experiment.py E002-DIAG`
+
+| Pair | Transfer MSE | Fresh MSE | Relative improvement |
+| --- | --- | --- | --- |
+| `linear` → `linear_alt` | 0.000055 | 0.000462 | +87.5% |
+| `interaction` → `interaction_alt` | 0.001904 | 0.002026 | +4.6% |
+| `linear` → `interaction` (legacy) | 0.017494 | 0.002394 | −701% |
+| `linear` → `quadratic` | 0.004579 | 0.004085 | −18.1% |
+
+The pooled related-pair criterion was met (46.1%), but only the additive pair
+cleared 10%; the interaction pair was a near miss, so the secondary
+`secondary_all_related_pairs_met` check is `false`. Source retention collapsed
+for every pair, so these are overwrite-style gains, not preserved prior
+knowledge. This heterogeneity is the main finding.
+
+### E005 — representation interventions (probe met, interpretation limited)
+
+Command: `py scripts/run_experiment.py E005`
+
+Selectivity ratio was 1.75 at layer 0 and 2.86 at layer 1, meeting the declared
+threshold. CKA between source and target activations was near zero (0.010 and
+0.007), so the transferred network did not reuse linearly similar
+representations. Ablation lowered source MSE and raised target MSE; the selected
+units are more influential than random units, but not "required" in the
+predicted direction.
+
+### Next experiment
+
+- Per-pair transfer criteria; do not pool a strong additive result with a weak
+  interaction result.
+- Encoder-only transfer and target-statistic reset to test whether forgetting is
+  caused by output-layer commitment.
+- Bounded replay buffers and replay-schedule sweeps; compare against full replay.
+- Repeat the intervention probe with multiple random draws and shuffled-label
+  controls.

@@ -55,6 +55,18 @@ def _changed(x: np.ndarray) -> np.ndarray:
     return -0.7 * x[:, 0] + 0.9 * x[:, 1] * x[:, 2] + 0.1
 
 
+def _linear_alt(x: np.ndarray) -> np.ndarray:
+    return -1.1 * x[:, 0] + 0.7 * x[:, 1] - 0.4 * x[:, 2] + 0.2
+
+
+def _interaction_alt(x: np.ndarray) -> np.ndarray:
+    return -1.1 * x[:, 0] * x[:, 1] + 0.4 * x[:, 2] - 0.2
+
+
+def _partial_interaction(x: np.ndarray) -> np.ndarray:
+    return 1.2 * x[:, 0] * x[:, 1] + 0.2 * x[:, 0] - 0.3
+
+
 RULES: dict[str, RuleSpec] = {
     "linear": RuleSpec(
         "linear",
@@ -80,6 +92,21 @@ RULES: dict[str, RuleSpec] = {
         "changed",
         "y = -0.7*f1 + 0.9*f2*f3 + 0.1 (post-change rule for E003)",
         _changed,
+    ),
+    "linear_alt": RuleSpec(
+        "linear_alt",
+        "y = -1.1*f1 + 0.7*f2 - 0.4*f3 + 0.2 (same additive structure, new coefficients)",
+        _linear_alt,
+    ),
+    "interaction_alt": RuleSpec(
+        "interaction_alt",
+        "y = -1.1*f1*f2 + 0.4*f3 - 0.2 (same interaction structure, new signs/coefficients)",
+        _interaction_alt,
+    ),
+    "partial_interaction": RuleSpec(
+        "partial_interaction",
+        "y = 1.2*f1*f2 + 0.2*f1 - 0.3 (interaction plus an additive term)",
+        _partial_interaction,
     ),
 }
 

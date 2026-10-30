@@ -65,7 +65,9 @@ class PredictResponse(BaseModel):
 class ExperimentStartRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    experiment: Literal["E001", "E002", "E003"]
+    experiment: Literal[
+        "E001", "E002", "E002-DIAG", "E003", "E003-RETENTION", "E005"
+    ]
     config: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -90,6 +92,17 @@ class MetricView(BaseModel):
     value: float
     step: int | None = None
     payload: dict[str, Any] = Field(default_factory=dict)
+
+
+class RevisionView(BaseModel):
+    id: int
+    experiment_id: str | None = None
+    payload: dict[str, Any] = Field(default_factory=dict)
+    created_at: datetime
+
+
+class RevisionListResponse(BaseModel):
+    revisions: list[RevisionView]
 
 
 class CheckpointView(BaseModel):

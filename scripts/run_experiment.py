@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from genesis.evaluation.experiments import (  # noqa: E402
+from genesis.evaluation.experiments import (
     E001Config,
     E002Config,
     E003Config,
@@ -29,12 +29,42 @@ from genesis.evaluation.experiments import (  # noqa: E402
     run_hybrid_ablation,
     save_result,
 )
+from genesis.evaluation.intervention_experiments import (
+    InterventionConfig,
+    run_intervention_probe,
+)
+from genesis.evaluation.retention_experiments import (
+    E003RetentionConfig,
+    run_e003_retention,
+)
+from genesis.evaluation.transfer_experiments import (
+    E002DiagnosticsConfig,
+    run_e002_diagnostics,
+)
 
 REGISTRY = {
-    "E001": (E001Config, run_e001, "E001_emergent_structure"),
-    "E002": (E002Config, run_e002, "E002_structure_reuse"),
-    "E003": (E003Config, run_e003, "E003_representation_revision"),
-    "HYBRID": (HybridAblationConfig, run_hybrid_ablation, "E004_hybrid_ablation"),
+    "E001": (E001Config, run_e001, "E001_emergent_structure", "results"),
+    "E002": (E002Config, run_e002, "E002_structure_reuse", "results"),
+    "E002-DIAG": (
+        E002DiagnosticsConfig,
+        run_e002_diagnostics,
+        "E002_structure_reuse",
+        "diagnostics",
+    ),
+    "E003": (E003Config, run_e003, "E003_representation_revision", "results"),
+    "E003-RETENTION": (
+        E003RetentionConfig,
+        run_e003_retention,
+        "E003_representation_revision",
+        "retention",
+    ),
+    "HYBRID": (HybridAblationConfig, run_hybrid_ablation, "E004_hybrid_ablation", "results"),
+    "E005": (
+        InterventionConfig,
+        run_intervention_probe,
+        "E005_representation_interventions",
+        "results",
+    ),
 }
 
 
@@ -56,7 +86,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    config_cls, runner, directory = REGISTRY[args.experiment]
+    config_cls, runner, directory, prefix = REGISTRY[args.experiment]
 
     overrides: dict[str, object] = {}
     if args.config:
@@ -75,7 +105,11 @@ def main() -> int:
         output = args.output
     else:
         seed_tag = "-".join(str(seed) for seed in getattr(config, "seeds", []))
-        output = args.output_dir / directory / f"results_seeds_{seed_tag or 'default'}.json"
+        output = (
+            args.output_dir
+            / directory
+            / f"{prefix}_seeds_{seed_tag or 'default'}.json"
+        )
     save_result(result, output)
 
     print(json.dumps(result["criterion"], indent=2))

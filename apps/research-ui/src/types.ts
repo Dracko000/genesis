@@ -53,6 +53,13 @@ export type MetricRecord = {
   payload: Record<string, unknown>;
 };
 
+export type RevisionRecord = {
+  id: number;
+  experiment_id: string | null;
+  payload: Record<string, unknown>;
+  created_at: string;
+};
+
 export type CheckpointRecord = {
   checkpoint_id: string;
   path: string;

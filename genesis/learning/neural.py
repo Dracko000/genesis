@@ -10,6 +10,8 @@ only, and predictions are de-standardised before being returned.
 from __future__ import annotations
 
 import copy
+from collections.abc import Iterator, Sequence
+from contextlib import contextmanager
 from typing import Literal
 
 import numpy as np
@@ -192,6 +194,68 @@ class NeuralPredictor:
             raise ValueError(f"features must have {self.input_dim} columns")
         normalized = self._forward(features)
         return normalized * self.target_std + self.target_mean
+
+    def hidden_activations(self, features: np.ndarray) -> list[np.ndarray]:
+        """Return post-activation values for each hidden layer."""
+
+        if not self._fitted:
+            raise RuntimeError("NeuralPredictor must be fitted before activations")
+        features = np.asarray(features, dtype=float)
+        if features.ndim == 1:
+            features = features.reshape(1, -1)
+        if features.shape[1] != self.input_dim:
+            raise ValueError(f"features must have {self.input_dim} columns")
+        tensor = torch.as_tensor(features, dtype=torch.float32)
+        activations: list[np.ndarray] = []
+        with torch.no_grad():
+            current = tensor
+            for module in self._model:
+                current = module(current)
+                if isinstance(module, (nn.ReLU, nn.Tanh)):
+                    activations.append(current.detach().numpy().copy())
+        return activations
+
+    def hidden_layer_count(self) -> int:
+        return len(self.config.hidden_sizes)
+
+    @contextmanager
+    def ablated_units(self, layer: int, units: Sequence[int]) -> Iterator[None]:
+        """Temporarily zero the output of selected hidden units.
+
+        ``layer`` indexes ``config.hidden_sizes``. Ablation is implemented with a
+        forward hook so the original parameters are never mutated.
+        """
+
+        if not self._fitted:
+            raise RuntimeError("NeuralPredictor must be fitted before ablation")
+        layer_count = self.hidden_layer_count()
+        if not 0 <= layer < layer_count:
+            raise ValueError(f"layer must be within [0, {layer_count})")
+        width = self.config.hidden_sizes[layer]
+        indices = sorted({int(unit) for unit in units})
+        if any(index < 0 or index >= width for index in indices):
+            raise ValueError(f"units must be within [0, {width})")
+
+        activation_module = self._model[2 * layer + 1]
+
+        def hook(_module: nn.Module, _inputs: tuple[torch.Tensor, ...], output: torch.Tensor) -> torch.Tensor:
+            mutated = output.clone()
+            mutated[:, indices] = 0.0
+            return mutated
+
+        handle = activation_module.register_forward_hook(hook)
+        try:
+            yield
+        finally:
+            handle.remove()
+
+    def predict_with_ablation(
+        self, features: np.ndarray, layer: int, units: Sequence[int]
+    ) -> np.ndarray:
+        """Predict with selected hidden units zeroed for the duration of the call."""
+
+        with self.ablated_units(layer, units):
+            return self.predict(features)
 
     @property
     def history(self) -> dict[str, list[float]]:

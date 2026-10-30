@@ -18,13 +18,28 @@ from genesis.evaluation.experiments import (
     run_e002,
     run_e003,
 )
+from genesis.evaluation.intervention_experiments import (
+    InterventionConfig,
+    run_intervention_probe,
+)
+from genesis.evaluation.retention_experiments import (
+    E003RetentionConfig,
+    run_e003_retention,
+)
+from genesis.evaluation.transfer_experiments import (
+    E002DiagnosticsConfig,
+    run_e002_diagnostics,
+)
 from genesis.storage.repository import ExperimentRecord, Repository
 from services.api.settings import Settings
 
 RUNNERS = {
     "E001": (E001Config, run_e001),
     "E002": (E002Config, run_e002),
+    "E002-DIAG": (E002DiagnosticsConfig, run_e002_diagnostics),
     "E003": (E003Config, run_e003),
+    "E003-RETENTION": (E003RetentionConfig, run_e003_retention),
+    "E005": (InterventionConfig, run_intervention_probe),
 }
 
 
@@ -82,6 +97,19 @@ def _execute(
                         "single_anomaly": entry.get("single_anomaly"),
                         "adaptation_curve": entry.get("adaptation_curve"),
                         "replay_consolidation": entry.get("replay_consolidation"),
+                    },
+                )
+        if kind == "E003-RETENTION":
+            for entry in result.get("per_seed", []):
+                repository.add_revision(
+                    experiment_id=experiment_id,
+                    payload={
+                        "experiment": "E003-v2",
+                        "seed": entry.get("seed"),
+                        "curve": entry.get("curve"),
+                        "isolated_anomaly": entry.get("isolated_anomaly"),
+                        "contaminated_batch": entry.get("contaminated_batch"),
+                        "criterion": result.get("criterion"),
                     },
                 )
         repository.add_log(

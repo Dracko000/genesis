@@ -79,9 +79,10 @@ Core endpoints:
 | POST/GET | `/experiences` | Store and list experiences |
 | POST | `/learning/step` | Train on stored labeled experiences, save a checkpoint |
 | POST | `/predict` | Predict with the active learner or a checkpoint |
-| POST | `/experiments` | Start E001/E002/E003 in a background worker |
+| POST | `/experiments` | Start E001/E002/E003/E002-DIAG/E003-RETENTION/E005 in a background worker |
 | GET | `/experiments`, `/experiments/{id}` | Status and full result |
 | GET | `/experiments/{id}/metrics` | Persisted metric rows |
+| GET | `/experiments/{id}/revisions`, `/revisions` | Structured revision history |
 | GET | `/checkpoints` | Checkpoint history |
 | POST | `/checkpoints/{id}/restore` | Restore a checkpoint as active |
 | GET | `/research-log` | `docs/research_log.md` plus runtime logs |
@@ -109,14 +110,19 @@ Build check: `npm run build`.
 ```bash
 py scripts/run_experiment.py E001
 py scripts/run_experiment.py E002
+py scripts/run_experiment.py E002-DIAG
 py scripts/run_experiment.py E003
+py scripts/run_experiment.py E003-RETENTION
 py scripts/run_experiment.py HYBRID
+py scripts/run_experiment.py E005
 ```
 
 Optional flags: `--seeds 0,1,2`, `--epochs 300`, `--config configs/E001.json`,
 `--output path.json`. Results are written under
-`experiments/<name>/results_seeds_<seeds>.json`. The same config and software
-produce the same result dictionary.
+`experiments/<name>/results_seeds_<seeds>.json` (v2 runs use a distinct prefix,
+e.g. `diagnostics_seeds_...` and `retention_seeds_...`). The same config and
+software produce the same result dictionary. Legacy result files are never
+overwritten by the v2 runners.
 
 Fast end-to-end smoke test:
 
@@ -170,6 +176,29 @@ to 0.547721 (catastrophic forgetting). An exploratory replay variant improved
 old-task MSE to 0.038171 ± 0.008553 while leaving new-task MSE at 0.342718 ±
 0.025429 — a clear adaptation/retention trade-off, not a free win.
 
+**E002-v2 — fair transfer diagnostics (2026-10-30).** Under matched 50-epoch
+target budgets, relatedness is heterogeneous: `linear → linear_alt` improved
+87.5% over fresh, `interaction → interaction_alt` improved only 4.6%, and the
+legacy `linear → interaction` pair was 701% worse. The pooled related-pair
+criterion was met (46.1%), but pooling hides the interaction-pair near miss.
+Source retention collapsed for every pair, so these are overwrite-style gains,
+not preserved prior knowledge.
+
+**E003-v2 — dual-gated retention (2026-10-30).** At 50 epochs the legacy gate
+accepted forgetting updates in 3/3 seeds (old MSE 0.5477). The dual gate
+rejected all three and restored state; dual gate plus replay accepted 3/3,
+improving new-task MSE 0.5357 → 0.3427 while keeping old-task MSE at 0.0382,
+inside the predeclared ~0.051 budget. Isolated anomalies were rejected 3/3 and
+the embedded outlier was filtered 3/3. The result is conditional on the declared
+budget, not a universal retention guarantee.
+
+**E005 — representation interventions (2026-10-30).** Ablating the
+source-most-active units changed source MSE 1.75× and 2.86× as much as matched
+random ablation (layer 0 and 1), meeting the influence criterion. CKA between
+source and target activations was near zero, and ablation lowered source MSE
+while raising target MSE, so the probe does **not** show positive requirement or
+semantic reuse.
+
 **Hybrid ablation.** The symbolic basis reached machine-precision MSE because
 its declared basis contains the true terms (`f1*f2`, `f3`); the neural-only MSE
 was 0.000649 ± 0.000185. The validation-selected hybrid chose symbolic in all
@@ -215,9 +244,12 @@ configs/                # reusable experiment configuration overrides
 
 - Low-dimensional synthetic worlds only; no real sensory or language data.
 - Compositional generalisation is operationalised as held-out sign quadrants.
-- E002's negative transfer is one rule pair and one budget schedule; it may be
-  an optimisation artefact as much as a representation result.
-- E003 retention is poor without replay; replay is exploratory and not tuned.
+- E002 transfer is heterogeneous: one additive pair helps, one interaction pair
+  barely helps, and unrelated pairs hurt; source retention collapsed in all
+  pairs. Pooling related pairs hides this.
+- E003 retention is only supported inside the declared budget and with replay.
+  The budget is a design choice; bounded replay and schedule sweeps are pending.
+- E005 unit ablation ignores redundancy; CKA measures only linear similarity.
 - The hybrid's symbolic basis is a fixed prior and therefore not a fair test of
   emergent symbols.
 - Numerical determinism is guaranteed for the recorded environment (CPU,
@@ -226,11 +258,12 @@ configs/                # reusable experiment configuration overrides
 
 ## Unresolved questions
 
-- Is the E002 negative transfer caused by target-statistic mismatch, output-
-  layer anchoring, or genuinely unhelpful features? An encoder-only transfer
-  ablation and a warm-up schedule sweep are the next tests.
-- Can replay be scheduled to retain old tasks without slowing adaptation
-  (e.g. gradient projection or elastic weight consolidation)?
+- Why does the additive pair transfer strongly while the interaction pair does
+  not? Per-pair criteria, encoder-only transfer, target-statistic reset and
+  warm-up sweeps are the next tests.
+- Can a bounded replay buffer match full replay without the adaptation cost?
+- Is the E005 influence effect stable across random draws and shuffled-label
+  controls, and does it survive redundancy-aware ablation?
 - Do held-out-quadrant gains survive on higher-dimensional or non-stationary
   environments?
 

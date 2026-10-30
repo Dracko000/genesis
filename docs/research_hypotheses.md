@@ -55,6 +55,11 @@ equal target-task budget relative to fresh initialisation.
   epochs. Transfer was 201% worse than fresh; source retention collapsed.
 - This is retained as a negative result. Possible causes: target-statistic
   anchoring, output-layer commitment, or genuinely unhelpful source features.
+- Status (2026-10-30, E002-v2): **mixed**. Under matched 50-epoch budgets the
+  additive-related pair improved 87.5%, the interaction-related pair improved
+  only 4.6%, and unrelated pairs were negative. The pooled criterion was met,
+  but pooling hides the failure. Source retention collapsed in every pair, so
+  the gains are overwrite-style rather than preserved reuse.
 
 ### H3 — Representation revision (E003)
 
@@ -68,6 +73,23 @@ rejecting an isolated anomalous observation.
 - Retention is **not** supported: old-task MSE rose from 0.000326 to 0.547721.
   Replay improved retention but slowed adaptation. This is a trade-off to be
   studied, not a solved problem.
+- Status (2026-10-30, E003-v2): **supported under the declared budget**. The
+  dual gate rejected all three forgetting updates and restored state; dual gate
+  plus replay accepted 3/3, improved new-task MSE 36.0%, and kept old-task MSE
+  (0.0382) inside the ~0.051 budget. Isolated and embedded outliers were
+  rejected. This is conditional on the predeclared budget, not a general
+  retention guarantee.
+
+### H5 — Source-specialised units are causally influential (E005)
+
+Ablating the source-most-active hidden units changes source MSE more than a
+matched random ablation.
+
+- Criterion: maximum per-layer selectivity ratio ≥ 1.5.
+- Status (2026-10-30): **supported as an influence claim only**. Ratios were
+  1.75 and 2.86, but ablation lowered source MSE while raising target MSE and
+  CKA was near zero. The units are influential, not positively required, and
+  the probe does not establish semantic reuse.
 
 ### H4 — Hybrid advantage
 
@@ -114,8 +136,12 @@ The following claims are **not** supported by this prototype:
 - that tokenization or segmentation provides semantic understanding,
 - that improved prediction implies human-interpretable concepts,
 - that a hybrid is superior in general,
-- that transfer works across related tasks (it failed in the one tested pair),
-- that adaptation preserves earlier knowledge (it did not without replay).
+- that transfer works across related tasks in general (one additive pair helped,
+  one interaction pair did not, and source retention collapsed),
+- that adaptation preserves earlier knowledge without an explicit retention
+  gate and replay (it did not),
+- that ablation-selected units are positively required for a task (E005 found
+  influence and near-zero CKA, not reuse).
 
 ## Open questions
 

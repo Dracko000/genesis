@@ -25,8 +25,8 @@ logic.
 | `genesis.language` | Character tokenizer, vocabulary, segmentation |
 | `genesis.environments` | `Dataset`, `Environment`, `SyntheticWorld` and rules |
 | `genesis.representation` | Feature encoder, `LatentState`, checkpoints, versioning |
-| `genesis.learning` | Neural predictor, learner, revision, consolidation, symbolic/hybrid |
-| `genesis.evaluation` | Splits, metrics, baselines, regression checks, experiment runners |
+| `genesis.learning` | Neural predictor, learner, revision/retention, interventions, consolidation, symbolic/hybrid |
+| `genesis.evaluation` | Splits, metrics, baselines, regression checks, E001–E005 runners |
 | `genesis.storage` | `Repository` contract and `SQLiteRepository` |
 | `services.api` | FastAPI schemas, endpoints, background experiment workers |
 | `apps.research-ui` | Vite + React + TypeScript dashboard |
@@ -89,8 +89,22 @@ Revision is validation-gated:
 
 A single prediction error is never treated as proof that the representation is
 wrong. `ReplayBuffer` implements deterministic reservoir sampling for optional
-consolidation; replay is exploratory in E003 and does not affect the gated
-criterion.
+consolidation; replay is exploratory in the legacy E003 and does not affect its
+gated criterion.
+
+The v2 retention path adds two layers without changing the legacy controller:
+
+1. `EvidenceValidator` computes residual median/MAD z-scores with the current
+   learner and rejects inconsistent records or batches that are too small to
+   evaluate.
+2. `RetentionRevisionController` gates on new-task improvement **and** an
+   old-task retention budget (`max(before * ratio, floor_fraction * variance)`).
+   Rejected candidates are rolled back and every attempt is appended to a
+   structured `history` payload.
+
+E005 additionally exposes per-hidden-layer activations, temporary unit ablation
+via a forward hook, and linear CKA. These are measurement tools, not a claim
+that units are interpretable symbols.
 
 ## Checkpoints
 
@@ -124,7 +138,9 @@ fsynced; sequence numbers are monotonic.
 the ASGI entry point that builds the default app. Long experiments run on daemon
 threads and persist `running` -> `completed`/`failed` transitions, including the
 error text. Checkpoint ids are unique; restoration loads and validates before
-replacing the active learner.
+replacing the active learner. `GET /experiments/{id}/revisions` and
+`GET /revisions` expose the structured revision payloads written by E003 and
+E003-RETENTION.
 
 ## Reproducibility contract
 

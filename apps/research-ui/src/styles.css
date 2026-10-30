@@ -388,3 +388,20 @@ tbody tr.selected {
   padding-bottom: 12px;
   border-bottom: 1px solid var(--border);
 }
+
+.revisions {
+  display: grid;
+  gap: 8px;
+}
+
+.revisions details {
+  padding: 8px 10px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.revisions summary {
+  cursor: pointer;
+  color: var(--muted);
+}

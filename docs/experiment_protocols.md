@@ -10,17 +10,28 @@ Generated results:
 
 - `experiments/E001_emergent_structure/results_seeds_0-1-2.json`
 - `experiments/E002_structure_reuse/results_seeds_0-1-2.json`
+- `experiments/E002_structure_reuse/baseline_pre_upgrade.json`
+- `experiments/E002_structure_reuse/diagnostics_seeds_0-1-2.json`
 - `experiments/E003_representation_revision/results_seeds_0-1-2.json`
+- `experiments/E003_representation_revision/baseline_pre_upgrade.json`
+- `experiments/E003_representation_revision/retention_seeds_0-1-2.json`
 - `experiments/E004_hybrid_ablation/results_seeds_0-1-2.json`
+- `experiments/E005_representation_interventions/results_seeds_0-1-2.json`
 
 Reproduce:
 
 ```bash
 py scripts/run_experiment.py E001
 py scripts/run_experiment.py E002
+py scripts/run_experiment.py E002-DIAG
 py scripts/run_experiment.py E003
+py scripts/run_experiment.py E003-RETENTION
 py scripts/run_experiment.py HYBRID
+py scripts/run_experiment.py E005
 ```
+
+Legacy E002/E003 files are immutable history. The v2 runners write separate
+files and never overwrite them.
 
 ---
 
@@ -113,6 +124,46 @@ should test encoder-only transfer, target-statistic reset and warm-up schedules.
 
 ---
 
+## E002-v2 — Fair transfer diagnostics
+
+**Research question.** Does prior experience reduce target-task learning cost
+when the source and target actually share structure, after matching
+architecture, seed, target data, target epochs and evaluation split?
+
+**Falsifiable hypothesis.** Averaged over related rule pairs and seeds,
+warm-start transfer lowers target MSE by at least 10% relative to an
+equal-budget fresh model.
+
+**Independent variable.** Rule pair: `linear` → `linear_alt` (additive-related),
+`interaction` → `interaction_alt` (interaction-related), `linear` →
+`interaction` (legacy, unrelated), `linear` → `quadratic` (unrelated).
+
+**Controls.** Same architecture seed; same target train/test records; same 50
+target epochs for transfer and fresh; source pretraining epochs/samples reported
+separately; same unrelated-prior control.
+
+**Data.** Source 500, target 120 train / 300 test, seeds 0,1,2. New rules:
+`linear_alt` keeps the additive family with new coefficients; `interaction_alt`
+keeps the interaction family with new signs/coefficients.
+
+**Declared success criterion.** Related-pair mean relative improvement vs fresh
+≥ 10%. Unrelated pairs are a negative control and are not used to claim transfer.
+A secondary diagnostic reports whether *each* related pair clears 10%; it does
+not change the primary `met` flag.
+
+**Recorded result (2026-10-30).** Criterion met on the average
+(46.1% improvement) but **heterogeneous**: additive-related 87.5%,
+interaction-related 4.6% (below threshold). The secondary check
+`secondary_all_related_pairs_met` is therefore `false`. The legacy pair was 701%
+worse than fresh. Source retention collapsed for every pair (e.g. additive
+source MSE 0.000035 → 1.958), so target gains must not be described as preserved
+knowledge.
+
+**Limitations.** Pooling related pairs hides per-pair failure; relatedness is
+defined by the synthetic rule family; one target budget.
+
+---
+
 ## E003 — Representation revision
 
 **Research question.** Can the learner adapt when the underlying rule changes
@@ -158,6 +209,79 @@ exploratory variant and was not tuned.
 
 ---
 
+## E003-v2 — Dual-gated revision with retention
+
+**Research question.** Can the learner adapt after a rule change while keeping
+earlier competence inside a predeclared budget?
+
+**Falsifiable hypothesis.** Evidence filtering plus a gate on both new-task
+improvement and old-task retention rejects isolated and embedded outliers, and
+replay keeps old-task error inside the budget at a bounded cost to adaptation.
+
+**Independent variable.** Gate condition: legacy single gate, dual gate, or dual
+gate with replay. All conditions share data, seeds, architecture and epochs.
+
+**Gate policy (predeclared).** New-task validation must improve; old-task
+validation MSE must stay below
+`max(before_old * 4.0, 0.20 * variance(old outcomes))`; at least 50% of the
+update batch must pass the robust residual filter.
+
+**Evidence filter.** Residual median/MAD z-score ≤ 6; batches smaller than 3 are
+insufficient evidence; accepted fraction ≥ 50%.
+
+**Data.** Same stable/changed pair and splits as E003, with a separate old-task
+validation split used only for the gate. Seeds 0,1,2.
+
+**Declared success criterion.** At the largest budget, dual-gate replay must
+improve new-task MSE ≥ 10%, keep every seed's old-task MSE within its budget,
+reject every isolated anomaly, and filter the injected outlier from every
+contaminated batch.
+
+**Recorded result (2026-10-30).** Criterion met. Dual gate without replay
+rejected every harmful update (acceptance 0/3) and restored the pre-update
+state. Dual gate with replay accepted 3/3, new-task MSE 0.536 → 0.343 (36.0%
+improvement), old-task MSE 0.00033 → 0.0382, inside the ~0.05 budget.
+Isolated-anomaly acceptance 0/3; contaminated outlier filtered 3/3. The
+legacy gate still accepted the forgetting update in 3/3 seeds.
+
+**Limitations.** The retention budget is a design choice, not a universal law.
+Replay uses the full earlier training set. Old gate and old test share a rule.
+
+---
+
+## E005 — Representation interventions
+
+**Research question.** Are the hidden units most active on the source task
+causally important for it, and how does that importance transfer to a related
+target task?
+
+**Falsifiable hypothesis.** Ablating the source-most-active units changes source
+MSE by at least 1.5× the magnitude of a matched random ablation, for at least
+one layer, averaged over seeds.
+
+**Independent variable.** Unit set: source-top-k versus matched random-k
+(`k = 20%` of layer width).
+
+**Controls.** Same transferred learner, same evaluation examples, same k, same
+seed for the random control.
+
+**Metrics.** Per-layer linear CKA between source and target activations; absolute
+and signed MSE change after ablation on both tasks.
+
+**Declared success criterion.** Maximum per-layer selectivity ratio ≥ 1.5.
+
+**Recorded result (2026-10-30).** Criterion met at layer 1 (ratio 2.86; layer 0
+ratio 1.75). CKA was low (0.010 at layer 0, 0.007 at layer 1), i.e. source and
+target representations were not linearly similar. Ablation *lowered* source MSE
+while raising target MSE, so the intervention does not show that the selected
+units are positively required for the source task. It only shows they are more
+influential than random units.
+
+**Limitations.** Ablation ignores redundancy; CKA measures linear similarity
+only; one related rule pair.
+
+---
+
 ## Hybrid ablation
 
 **Research question.** Does a hybrid of the neural baseline and a low-level
@@ -193,7 +317,11 @@ is reported as such.
 
 - Dedicated renamed-feature transfer test for E002 (E001 currently includes only
   a feature-permutation probe).
-- E002 follow-up: encoder-only transfer, target-statistic reset, warm-up sweep.
-- Replay/retention schedule sweep for E003.
+- E002 follow-up: encoder-only transfer, target-statistic reset, warm-up sweep,
+  and per-pair success criteria instead of pooling related pairs.
+- Replay/retention schedule sweep for E003 and bounded-buffer parity with the
+  full-replay condition.
+- Layer-wise intervention sweep with redundancy controls (shuffled labels,
+  multiple random draws, per-seed confidence intervals).
 - Compositional generalisation in higher dimensions and non-stationary streams.
 - A symbolic protocol that does not hand the true operator basis to the learner.

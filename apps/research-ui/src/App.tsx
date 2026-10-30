@@ -9,6 +9,7 @@ import type {
   Observation,
   PredictResponse,
   ResearchLog,
+  RevisionRecord,
 } from "./types";
 
 type Tab = "experiences" | "learning" | "predict" | "experiments" | "checkpoints" | "log";
@@ -49,6 +50,71 @@ const DEFAULT_CONFIGS: Record<string, Record<string, unknown>> = {
     n_test: 300,
     adaptation_epochs: [5, 10, 25, 50],
     neural: { epochs: 300, hidden_sizes: [32, 32], seed: 0 },
+  },
+  "E002-DIAG": {
+    pairs: [
+      {
+        label: "additive_related",
+        source_rule: "linear",
+        target_rule: "linear_alt",
+        related: true,
+      },
+      {
+        label: "interaction_related",
+        source_rule: "interaction",
+        target_rule: "interaction_alt",
+        related: true,
+      },
+      {
+        label: "legacy_linear_to_interaction",
+        source_rule: "linear",
+        target_rule: "interaction",
+        related: false,
+      },
+      {
+        label: "unrelated_linear_to_quadratic",
+        source_rule: "linear",
+        target_rule: "quadratic",
+        related: false,
+      },
+    ],
+    seeds: [0, 1, 2],
+    n_source: 500,
+    n_target: 120,
+    n_target_test: 300,
+    source_epochs: 250,
+    target_epochs: 50,
+    full_target_epochs: 250,
+    neural: { epochs: 250, hidden_sizes: [32, 32], seed: 0 },
+  },
+  "E003-RETENTION": {
+    seeds: [0, 1, 2],
+    n_train: 400,
+    n_new: 120,
+    n_new_val: 100,
+    n_test: 300,
+    adaptation_epochs: [5, 10, 25, 50],
+    neural: { epochs: 300, hidden_sizes: [32, 32], seed: 0 },
+    min_new_task_improvement: 1e-6,
+    old_task_max_ratio: 4,
+    old_task_mse_floor_fraction: 0.2,
+    min_accepted_fraction: 0.5,
+    max_residual_z: 6,
+    min_batch_size: 3,
+    success_new_task_improvement: 0.1,
+  },
+  E005: {
+    seeds: [0, 1, 2],
+    source_rule: "linear",
+    target_rule: "linear_alt",
+    n_source: 400,
+    n_target: 120,
+    n_target_test: 200,
+    source_epochs: 200,
+    target_epochs: 50,
+    ablation_fraction: 0.2,
+    neural: { epochs: 300, hidden_sizes: [32, 32], seed: 0 },
+    success_selectivity_ratio: 1.5,
   },
 };
 
@@ -109,6 +175,7 @@ export default function App() {
   );
   const [selectedExperiment, setSelectedExperiment] = useState<string | null>(null);
   const [selectedMetrics, setSelectedMetrics] = useState<MetricRecord[]>([]);
+  const [selectedRevisions, setSelectedRevisions] = useState<RevisionRecord[]>([]);
 
   const [researchLog, setResearchLog] = useState<ResearchLog | null>(null);
   const [compareA, setCompareA] = useState("");
@@ -183,11 +250,16 @@ export default function App() {
   useEffect(() => {
     if (!selectedExperiment) {
       setSelectedMetrics([]);
+      setSelectedRevisions([]);
       return;
     }
     api
       .getMetrics(selectedExperiment)
       .then(setSelectedMetrics)
+      .catch(fail);
+    api
+      .getRevisions(selectedExperiment)
+      .then(setSelectedRevisions)
       .catch(fail);
   }, [selectedExperiment]);
 
@@ -519,7 +591,12 @@ export default function App() {
               >
                 <option value="E001">E001 — Emergent structure</option>
                 <option value="E002">E002 — Structure reuse</option>
+                <option value="E002-DIAG">E002-v2 — Fair transfer diagnostics</option>
                 <option value="E003">E003 — Representation revision</option>
+                <option value="E003-RETENTION">
+                  E003-v2 — Dual-gated retention
+                </option>
+                <option value="E005">E005 — Representation interventions</option>
               </select>
             </label>
             <label>
@@ -615,6 +692,34 @@ export default function App() {
                       </div>
                     ) : (
                       <p className="empty">No metric rows.</p>
+                    )}
+                    <h4>Revision history ({selectedRevisions.length})</h4>
+                    {selectedRevisions.length ? (
+                      <div className="revisions">
+                        {selectedRevisions.map((revision) => {
+                          const payload = revision.payload as {
+                            seed?: number;
+                            accepted?: boolean;
+                            update_accepted?: boolean;
+                          };
+                          const accepted = payload.accepted ?? payload.update_accepted;
+                          return (
+                            <details key={revision.id}>
+                              <summary>
+                                revision #{revision.id} · seed {payload.seed ?? "—"} ·{" "}
+                                {accepted === undefined
+                                  ? "candidate"
+                                  : accepted
+                                    ? "accepted"
+                                    : "rejected"}
+                              </summary>
+                              <Json value={revision.payload} />
+                            </details>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="empty">No revision rows.</p>
                     )}
                   </>
                 )}

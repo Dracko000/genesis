@@ -27,10 +27,10 @@ from services.api.experiments import build_config, launch_experiment
 from services.api.models import (
     CheckpointListResponse,
     CheckpointView,
+    ExperienceListResponse,
     ExperimentListResponse,
     ExperimentStartRequest,
     ExperimentView,
-    ExperienceListResponse,
     HealthResponse,
     LearningStepRequest,
     LearningStepResponse,
@@ -40,6 +40,8 @@ from services.api.models import (
     PredictResponse,
     ResearchLogResponse,
     RestoreResponse,
+    RevisionListResponse,
+    RevisionView,
     VersionResponse,
 )
 from services.api.settings import Settings
@@ -223,7 +225,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 },
             )
             return LearningStepResponse(experiment_id=experiment_id, status="completed", **payload)
-        except Exception as exc:  # noqa: BLE001 - failures must be persisted
+        except Exception as exc:
             state.repository.update_experiment(
                 experiment_id, status="failed", error=f"{type(exc).__name__}: {exc}"
             )
@@ -283,7 +285,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def start_experiment(request: ExperimentStartRequest) -> ExperimentView:
         try:
             config = build_config(request.experiment, request.config)
-        except Exception as exc:  # noqa: BLE001 - validation feedback
+        except Exception as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         experiment_id = str(uuid.uuid4())
         seeds = getattr(config, "seeds", None)
@@ -339,6 +341,38 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             for metric in state.repository.list_metrics(experiment_id)
         ]
 
+    def _revision_views(rows: list[dict[str, Any]]) -> list[RevisionView]:
+        return [
+            RevisionView(
+                id=row["id"],
+                experiment_id=row.get("experiment_id"),
+                payload=row.get("payload", {}),
+                created_at=row["created_at"],
+            )
+            for row in rows
+        ]
+
+    @app.get(
+        "/experiments/{experiment_id}/revisions",
+        response_model=RevisionListResponse,
+    )
+    def get_experiment_revisions(experiment_id: str) -> RevisionListResponse:
+        if state.repository.get_experiment(experiment_id) is None:
+            raise HTTPException(status_code=404, detail="experiment not found")
+        return RevisionListResponse(
+            revisions=_revision_views(
+                state.repository.list_revisions(experiment_id=experiment_id)
+            )
+        )
+
+    @app.get("/revisions", response_model=RevisionListResponse)
+    def list_revisions(experiment_id: str | None = None) -> RevisionListResponse:
+        return RevisionListResponse(
+            revisions=_revision_views(
+                state.repository.list_revisions(experiment_id=experiment_id)
+            )
+        )
+
     # -- checkpoints -----------------------------------------------------
     @app.get("/checkpoints", response_model=CheckpointListResponse)
     def list_checkpoints(
@@ -363,7 +397,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             raise HTTPException(status_code=404, detail="checkpoint not found")
         try:
             learner, metadata = Learner.from_checkpoint(record.path)
-        except Exception as exc:  # noqa: BLE001 - report corrupt checkpoints clearly
+        except Exception as exc:
             raise HTTPException(status_code=500, detail=f"checkpoint load failed: {exc}") from exc
         with state.lock:
             state.active_learner = learner
